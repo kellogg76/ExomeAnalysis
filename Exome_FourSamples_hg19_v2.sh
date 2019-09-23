@@ -6,13 +6,13 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=OpticPit
+RunCode=FEVRold
 
 #Enter sample names below
-sample1=FM
-sample2=JD
-sample3=MD
-sample4=TM
+sample1=3015
+sample2=2534
+sample3=2450
+sample4=2491
 
 ###Paths to files###
 #Linux Paths
@@ -337,6 +337,13 @@ specific_coverage(){
 samtools mpileup -r 'chr1:1,958,700-1,958,907' $runpath/$sample1.realigned.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
 }
 
+merge_FEVR(){
+#Merge VCF's into large FEVR database
+bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
+bcftools index $runpath/$RunCode.snpEff.vcf.gz
+bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
+}
+
 ##########################
 ###Select which functions to run###
 ##########################
@@ -349,8 +356,8 @@ timestamp
 #realigner1
 #realigner2
 #recalibration
-#variant_calling
-#SNPEff
+variant_calling
+SNPEff
 #Gemini_update
 #Gemini_db
 #Gemini_export
@@ -358,6 +365,7 @@ exomiser
 #######coverage ###Not working yet for hg19
 ######vep  ###Not working yet
 #specific_coverage
+merge_FEVR
 
 #Generate Report Files
 echo "***************"
@@ -429,7 +437,7 @@ clinvar_pathogenic(){
 #Find variants that are listed as pathogenic in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Pathogenic ClinVar entries seen in this data :-" > $temppath/PathogenicClinVar.txt
-gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_so, impact_severity, gerp_bp_score, in_omim, clinvar_sig, clinvar_disease_name, clinvar_origin, clinvar_gene_phenotype, is_conserved, cosmic_ids, qual, filter, depth, qual_depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
 
 }
 
@@ -527,18 +535,18 @@ prediction_scores(){
 #########################
 ###Select which reports to run###
 #########################
-report_header
-variant_count
-snp_indel_count
-severity
-clinvar_variants
-clinvar_pathogenic
+#report_header
+#variant_count
+#snp_indel_count
+#severity
+#clinvar_variants
+#clinvar_pathogenic
 ##################prediction_scores -DOESN'T CURRENTLY WORK
-clinvar_keyword
-gemini_results
-key_genes
-report_subscript
-report_supplemental
+#clinvar_keyword
+#gemini_results
+#key_genes
+#report_subscript
+#report_supplemental
 
 #Merge text reports
 cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt

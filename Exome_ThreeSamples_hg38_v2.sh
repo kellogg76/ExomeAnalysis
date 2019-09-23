@@ -396,7 +396,7 @@ clinvar_pathogenic(){
 #Find variants that are listed as pathogenic in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Pathogenic ClinVar entries seen in this data :-" > $temppath/PathogenicClinVar.txt
-gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_so, impact_severity, gerp_bp_score, in_omim, clinvar_sig, clinvar_disease_name, clinvar_origin, clinvar_gene_phenotype, is_conserved, cosmic_ids, qual, filter, depth, qual_depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
 
 }
 

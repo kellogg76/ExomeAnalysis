@@ -6,10 +6,10 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR101
+RunCode=S30
 
 #Enter sample name below
-sample1=Control
+sample1=S30
 
 ###Paths to files###
 #Linux Paths
@@ -244,26 +244,34 @@ exomiser(){
 java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample1.yml
 }
 
+merge_FEVR(){
+#Merge VCF's into large FEVR database
+bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
+bcftools index $runpath/$RunCode.snpEff.vcf.gz
+bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
+}
+
 ##########################
 ###Select which functions to run###
 ##########################
 timestamp
 #catenation
-#bwa_step
-#read_groups
-#build_bam_index
-#mark_duplicates
-#realigner1
-#realigner2
-#recalibration
-#variant_calling
-#SNPEff
-#Gemini_update
-#Gemini_db
+bwa_step
+read_groups
+build_bam_index
+mark_duplicates
+realigner1
+realigner2
+recalibration
+variant_calling
+SNPEff
+Gemini_update
+Gemini_db
 Gemini_export
 ######coverage               ###Not working yet for hg19
 ######vep              ###Not working yet
 #specific_coverage
+merge_FEVR
 
 #Generate Report Files
 echo "***************"
@@ -331,9 +339,7 @@ clinvar_pathogenic(){
 #Find variants that are listed as pathogenic in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Pathogenic ClinVar entries seen in this data :-" > $temppath/PathogenicClinVar.txt
-#gemini query -q 'select chrom,start,end,ref,alt,qual,gene,depth,clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
-
-gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_so, impact_severity, gerp_bp_score, in_omim, clinvar_sig, clinvar_disease_name, clinvar_origin, clinvar_gene_phenotype, is_conserved, cosmic_ids, qual, filter, depth, qual_depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
 }
 
 clinvar_keyword(){
