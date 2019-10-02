@@ -6,12 +6,12 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVRold
+RunCode=FEVR15
 
 #Enter sample names below
-sample1=2534
-sample2=2450
-sample3=2491
+sample1=467
+sample2=538
+sample3=606
 
 ###Paths to files###
 #Linux Paths
@@ -249,7 +249,7 @@ gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, ge
 #Non Homozygous
 gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF OR gt_types.$sample2 != HOM_REF OR gt_types.$sample3 != HOM_REF" $runpath/$RunCode.gemini.db > $runpath/$RunCode.non_hom_med_high_rare.txt
 
-#Homozygous
+#Homozygous Alt
 gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT OR gt_types.$sample2 == HOM_ALT OR gt_types.$sample3 == HOM_ALT" $runpath/$RunCode.gemini.db > $runpath/$RunCode.hom_alt_med_high_rare.txt
 echo "...complete."
 
@@ -301,6 +301,18 @@ java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis
 java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample3.yml
 }
 
+manta(){
+#Run Manta Structural Variant Caller v1.6.0 for 
+~/manta1.6.0/bin/configManta.py --bam $runpath/$sample1.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $runpath/manta/$sample1 --exome
+python $runpath/manta/runWorkflow.py
+
+~/manta1.6.0/bin/configManta.py --bam $runpath/$sample2.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $runpath/manta/$sample2 --exome
+python $runpath/manta/runWorkflow.py
+
+~/manta1.6.0/bin/configManta.py --bam $runpath/$sample3.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $runpath/manta/$sample3 --exome
+python $runpath/manta/runWorkflow.py
+}
+
 specific_coverage(){
 #The coverage of a specific region as defined by the PI
 #Count the total and averaged coverage 
@@ -312,6 +324,72 @@ merge_FEVR(){
 bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
 bcftools index $runpath/$RunCode.snpEff.vcf.gz
 bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
+}
+
+FEVR_export(){
+ #Output FEVR Email Files
+echo "***************"
+echo "Outputting FEVR files..."
+echo "***************"
+timestamp
+dos2unix /mnt/d/FEVR_gene_list.txt
+
+#Heterozygous
+#Sample 1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hets.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hets.txt >> $temppath/FEVR1_email_hets.txt
+#Sample 2
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_hets.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR2_all_hets.txt >> $temppath/FEVR2_email_hets.txt
+#Sample 3
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_hets.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR3_all_hets.txt >> $temppath/FEVR3_email_hets.txt
+
+#Non Homozygous
+#Sample1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_non_homs.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_non_homs.txt >> $temppath/FEVR1_email_non_homs.txt
+#Sample2
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_non_homs.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR2_all_non_homs.txt >> $temppath/FEVR2_email_non_homs.txt
+#Sample3
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_non_homs.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR3_all_non_homs.txt >> $temppath/FEVR3_email_non_homs.txt
+
+#Homozygous Alt
+#Sample1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hom_alt.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hom_alt.txt >> $temppath/FEVR1_email_hom_alt.txt
+#Sample2
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_hom_alt.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR2_all_hom_alt.txt >> $temppath/FEVR2_email_hom_alt.txt
+#Sample3
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_hom_alt.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR3_all_hom_alt.txt >> $temppath/FEVR3_email_hom_alt.txt
+
+#Merging Files
+cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/FEVRSample1_EMAIL.txt
+cat $temppath/FEVR2_email_hets.txt $temppath/FEVR2_email_non_homs.txt $temppath/FEVR2_email_hom_alt.txt > $temppath/FEVRSample2_EMAIL.txt
+cat $temppath/FEVR3_email_hets.txt $temppath/FEVR3_email_non_homs.txt $temppath/FEVR3_email_hom_alt.txt > $temppath/FEVRSample3_EMAIL.txt
+#Delete duplicate lines
+cat $temppath/FEVRSample1_EMAIL.txt | sort | uniq > $runpath/FEVRSample1_EMAIL.txt
+cat $temppath/FEVRSample2_EMAIL.txt | sort | uniq > $runpath/FEVRSample2_EMAIL.txt
+cat $temppath/FEVRSample3_EMAIL.txt | sort | uniq > $runpath/FEVRSample3_EMAIL.txt
+#Write Header
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample1_EMAIL.txt > temp && mv temp $runpath/FEVRSample1_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample2_EMAIL.txt > temp && mv temp $runpath/FEVRSample2_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample3_EMAIL.txt > temp && mv temp $runpath/FEVRSample3_EMAIL.txt
+
+echo "...complete."
 }
 
 ##########################
@@ -326,15 +404,17 @@ timestamp
 #realigner1
 #realigner2
 #recalibration
-variant_calling
-SNPEff
+#variant_calling
+#SNPEff
 #Gemini_update
 #Gemini_db
 #Gemini_export
 #######coverage ###Not working yet for hg19
 ######vep  ###Not working yet
 #specific_coverage
-merge_FEVR
+#merge_FEVR
+#manta
+FEVR_export
 
 #Generate Report Files
 echo "***************"
@@ -414,7 +494,7 @@ clinvar_keyword(){
 #Find variants that are listed  with a keyword in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "ClinVar entries matching the keyword 'Retinopathy' seen in this data after filtering out poor quality & low coverage reads :-" > $temppath/KeywordClinVar.txt
-gemini query -q 'select chrom,start,end,ref,alt,gene,depth,clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $runpath/$RunCode.gemini.db >> $temppath/KeywordClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $runpath/$RunCode.gemini.db >> $temppath/KeywordClinVar.txt
 }
 
 exome_coverage(){

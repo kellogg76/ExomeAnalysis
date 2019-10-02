@@ -6,10 +6,10 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=S30
+RunCode=FEVR101
 
 #Enter sample name below
-sample1=S30
+sample1=Control
 
 ###Paths to files###
 #Linux Paths
@@ -237,11 +237,17 @@ perl variant_effect_predictor.pl -i example.vcf \
 specific_coverage(){
 #The coverage of a specific region as defined by the PI
 #Count the total and averaged coverage 
-samtools mpileup -r 'chr1:1,958,700-1,958,907' $runpath/$sample1.realigned.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
+samtools mpileup -r 'chr1:1,958,700-1,958,907' $sample1.recalibrated.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
 }
 
 exomiser(){
 java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample1.yml
+}
+
+manta(){
+#Run Manta Structural Variant Caller v1.6.0 for 
+~/manta1.6.0/bin/configManta.py --bam $runpath/$sample1.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $runpath/manta --exome
+python $runpath/manta/runWorkflow.py
 }
 
 merge_FEVR(){
@@ -251,27 +257,65 @@ bcftools index $runpath/$RunCode.snpEff.vcf.gz
 bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
 }
 
+FEVR_export(){
+ #Output FEVR Email Files
+echo "***************"
+echo "Outputting FEVR files..."
+echo "***************"
+timestamp
+
+#gene, codon_change, aa_change, rs_ids, max_aaf_all freq, gerp_bp_score
+
+#Heterozygous
+#Sample 1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hets.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hets.txt >> $temppath/FEVR1_email_hets.txt
+
+#Non Homozygous
+#Sample1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_non_homs.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_non_homs.txt >> $temppath/FEVR1_email_non_homs.txt
+
+#Homozygous Alt
+#Sample1
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hom_alt.txt
+#Now extract only genes in /mnt/d/FEVR_gene_list.txt
+grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hom_alt.txt >> $temppath/FEVR1_email_hom_alt.txt
+
+#Merging Files
+cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/FEVRSample1_EMAIL.txt
+#Delete duplicate lines
+cat $temppath/FEVRSample1_EMAIL.txt | sort | uniq > $runpath/FEVRSample1_EMAIL.txt
+#Write Header
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample1_EMAIL.txt > temp && mv temp $runpath/FEVRSample1_EMAIL.txt
+echo "...complete."
+}
+
 ##########################
 ###Select which functions to run###
 ##########################
 timestamp
 #catenation
-bwa_step
-read_groups
-build_bam_index
-mark_duplicates
-realigner1
-realigner2
-recalibration
-variant_calling
-SNPEff
-Gemini_update
-Gemini_db
-Gemini_export
+#bwa_step
+#read_groups
+#build_bam_index
+#mark_duplicates
+#realigner1
+#realigner2
+#recalibration
+#variant_calling
+#SNPEff
+#Gemini_update
+#Gemini_db
+#Gemini_export
 ######coverage               ###Not working yet for hg19
 ######vep              ###Not working yet
 #specific_coverage
-merge_FEVR
+#manta
+#merge_FEVR
+FEVR_export
 
 #Generate Report Files
 echo "***************"
@@ -346,7 +390,7 @@ clinvar_keyword(){
 #Find variants that are listed  with a keyword in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "ClinVar entries matching the keyword 'Retinopathy' seen in this data after filtering out poor quality & low coverage reads :-" > $temppath/KeywordClinVar.txt
-gemini query -q 'select chrom,start,end,ref,alt,gene,depth,clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $runpath/$RunCode.gemini.db >> $temppath/KeywordClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $runpath/$RunCode.gemini.db >> $temppath/KeywordClinVar.txt
 }
 
 gemini_results(){
@@ -432,18 +476,18 @@ prediction_scores(){
 #########################
 ###Select which reports to run###
 #########################
-report_header
-variant_count
-snp_indel_count
-severity
-clinvar_variants
-clinvar_pathogenic
+#report_header
+#variant_count
+#snp_indel_count
+#severity
+#clinvar_variants
+#clinvar_pathogenic
 ####################prediction_scores -DOESN'T CURRENTLY WORK
-clinvar_keyword
-gemini_results
-key_genes
-report_subscript
-report_supplemental
+#clinvar_keyword
+#gemini_results
+#key_genes
+#report_subscript
+#report_supplemental
 
 #Merge text reports
 cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt
