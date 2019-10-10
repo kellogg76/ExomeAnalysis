@@ -324,6 +324,8 @@ merge_FEVR(){
 bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
 bcftools index $runpath/$RunCode.snpEff.vcf.gz
 bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
+#Merge new VCF into a new FEVR.combined.gemini.db
+ gemini load -v $buildpath/FEVR.combined.vcf -t snpEff --cores 8 $buildpath/FEVR.combined.gemini.db
 }
 
 FEVR_export(){
@@ -550,7 +552,7 @@ printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
 report_supplemental(){
  printf "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
- "Supplemental information \n" \
+"Supplemental information \n" \
 "Methodology :-" \
 "Exome Capture: Standard manufacturer protocols were followed to perform target capture with the Illumina Nextera DNA Exome kit. Sequencing is done with 150bp paired-end reads on Illumina NextSeq." \
 "The Illumina Nextera DNA Exome kit is designed to produce at least 50x coverage.\n" \
@@ -562,7 +564,9 @@ report_supplemental(){
 "Illumina Nextera DNA Exome Kit is designed to capture exons annotated by the Consensus Coding Sequence (CCDS) coding regions, however not all exons are captured equally.\n"\
 "This can result in some regions which are under represented. Sequence variation in an individual may result in poor or biased allele-specific enrichment and sequence coverage \n"\
 "below the threshold resulting in failure to detect a mutation. "\
-"This capture kit does not target the mitochondrial genome." > $temppath/Report_Supplemental.txt
+"This capture kit does not target the mitochondrial genome."\
+"Manta calls structural variants (SVs) and indels from mapped paired-end sequencing reads. It is optimized for analysis of germline variation in small sets of individuals and somatic variation in tumor/normal sample pairs."\
+"Manta discovers, assembles and scores large-scale SVs, medium-sized indels and large insertions. More details can be found here https://github.com/Illumina/manta" > $temppath/Report_Supplemental.txt
 }
 
 prediction_scores(){
