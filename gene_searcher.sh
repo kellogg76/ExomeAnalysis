@@ -56,5 +56,4 @@ then
 	echo "Complete."
 fi
 
-#ADD VARIABLES FOR MAX_AAF
 #Change line 18 so it gets the header from elsewhere so it's always current
