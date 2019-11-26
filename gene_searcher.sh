@@ -43,7 +43,7 @@ then
 	#Export known SNPs from this gene
 	echo "Exporting all known variants seen in the data set..."
 	#Check if the file alredy exists to save time
-	if test -f "/mnt/d/all_variants.txt"; then
+	if test -f "$OutputDir/all_variants.txt"; then
 		echo "file exists"
 		export_SNPs
 		file_stripper
