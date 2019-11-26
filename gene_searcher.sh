@@ -36,6 +36,10 @@ echo "Which gene would you like to search for: "
 read gene_name
 echo "Gene name entered was"  $gene_name
 read -p "Is this correct? (y/n) " -n 1 -r
+echo "What Max Allele Frequency % would you like to have (default 1): "
+read all_freq
+echo "Frequency entered was"  $all_freq
+read -p "Is this correct? (y/n) " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -48,7 +52,7 @@ then
 		export_SNPs
 		file_stripper
 	else
-		gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header $GeminiDB > $OutputDir/all_variants.txt
+		gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < $all_freq" --header $GeminiDB > $OutputDir/all_variants.txt
 		export_SNPs
 		file_stripper
 		echo "All files from this search can be found in $OutputDir"
