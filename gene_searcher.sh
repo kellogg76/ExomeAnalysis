@@ -34,10 +34,9 @@ NR!=FNR {
 #Get gene name from user
 echo "Which gene would you like to search for: "
 read gene_name
-echo "Gene name entered was"  $gene_name
-read -p "Is this correct? (y/n) " -n 1 -r
 echo "What Max Allele Frequency % would you like to have (default 1): "
 read all_freq
+echo "Gene name entered was"  $gene_name
 echo "Frequency entered was"  $all_freq
 read -p "Is this correct? (y/n) " -n 1 -r
 echo    # (optional) move to a new line
