@@ -265,15 +265,15 @@ coverage(){
 timestamp
 echo "Calculating coverage:  " $sample1
 #Perform calculation & export
-java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample1.recalibrated.sorted.bam O=$runpath/$sample1.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list TARGET_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list
+java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample1.recalibrated.sorted.bam O=$runpath/$sample1.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list TARGET_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list
 
 echo "Calculating coverage:  " $sample2
 #Perform calculation & export
-java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample2.recalibrated.sorted.bam O=$runpath/$sample2.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list TARGET_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list
+java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample2.recalibrated.sorted.bam O=$runpath/$sample2.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list TARGET_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list
 
 echo "Calculating coverage:  " $sample3
 #Perform calculation & export
-java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample3.recalibrated.sorted.bam O=$runpath/$sample3.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list TARGET_INTERVALS=$buildpath/truseq-exome-targeted-regions-manifest-v1-2_hg38.interval_list
+java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample3.recalibrated.sorted.bam O=$runpath/$sample3.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list TARGET_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list
 }
 
 vep(){

@@ -6,10 +6,10 @@ echo "Mats Batch Gene Coverage Calculator"
 echo "***************"
 
 #Bam file name
-BamToSearch=/mnt/d/FEVR101/Control.bwa.sorted.bam
+BamToSearch=/mnt/d/2450.recalibrated.sorted.bam
 
 #List of Genes
-GeneList=/mnt/d/FEVR_gene_list.txt
+GeneList=/mnt/d/JR_gene_list.txt
 
 #Output Directory
 OutputDir=/mnt/d/BatchCoverage
@@ -27,6 +27,22 @@ FASTA=/mnt/d/hg19/human_g1k_v37.fasta
 	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt >>$OutputDir/Batch_report.txt
 	printf "Total Coding Coverage	Average Coding Coverage\n" >> $OutputDir/Batch_report.txt
 	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_exon_coverage.txt  >>$OutputDir/Batch_report.txt
+	#Calculate Max, Min and Mean coverage
+	printf "Max, Min, Mean Coding Coverage\n" >> $OutputDir/Batch_report.txt
+	awk 'NR == 1 { min = $4; max = $4 }
+   {
+    sum += $4
+    if ($4 > max) {
+        max = $4
+    }
+    if ($4 < min) {
+        min = $4
+    }
+   } END {
+    print max
+    print min
+    print sum / NR
+   }' /mnt/d/GeneCoverage/NDP_total_exon_coverage.txt >>$OutputDir/Batch_report.txt
 	printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >>$OutputDir/Batch_report.txt
  }
  
@@ -34,6 +50,7 @@ while IFS="" read -r gene_name || [ -n "$gene_name" ]
 do
   echo "$gene_name"
   #Export all FEVR genes to new bed file
+  mkdir  $OutputDir
   echo "Exporting gene to a BED file"
   grep -w ${gene_name} /mnt/d/hg19/hg19_genes.bed >$OutputDir/${gene_name}_gene.bed
   grep -w ${gene_name} /mnt/d/hg19/hg19_exons.bed >$OutputDir/${gene_name}_exons.bed
@@ -58,4 +75,7 @@ do
    rm $OutputDir/${gene_name}_exons_nochr.bed
    #rm /mnt/d/${gene_name}_total_exon_coverage.txt
    #rm /mnt/d/${gene_name}_total_gene_coverage.txt
-done < /mnt/d/FEVR_gene_list.txt
+done < $GeneList
+
+
+# list sample BAM's in a text file just like gene list
