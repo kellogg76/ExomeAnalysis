@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Command to run this script is ./Exome_ThreeSamples_hg19_v2.sh sample1
+#eg ./Exome_ThreeSamples_hg19_v2.sh 549
+
 echo "***************"
 echo "Mats Exome Pipeline"
 echo "This pipeline uses hg19 for all analysis"
@@ -9,7 +12,7 @@ echo "***************"
 RunCode=FEVR101
 
 #Enter sample name below
-sample1=Control
+sample1=$1
 
 ###Paths to files###
 #Linux Paths
