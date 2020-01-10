@@ -2,7 +2,7 @@
 #Script asks for gene name then searches a gemini.db for all hits in that gene
 
 echo "***************"
-echo "Mats FEVR Gene Searcher"
+echo "Mats Gene Searcher"
 echo "***************"
 
 #Output Directory
@@ -36,6 +36,8 @@ echo "Which gene would you like to search for: "
 read gene_name
 echo "Gene name entered was"  $gene_name
 read -p "Is this correct? (y/n) " -n 1 -r
+echo    # (optional) move to a new line
+echo "Searching $GeminiDB for variants"
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
