@@ -1,6 +1,10 @@
 #!/bin/bash
 #Script asks for gene name then searches a gemini.db for all hits in that gene
 
+<<to_add
+#Change line 22 so it gets the header from elsewhere so it's always current
+to_add
+
 echo "***************"
 echo "Mats Gene Searcher"
 echo "***************"
@@ -37,11 +41,12 @@ read gene_name
 echo "Gene name entered was"  $gene_name
 read -p "Is this correct? (y/n) " -n 1 -r
 echo    # (optional) move to a new line
-echo "Searching $GeminiDB for variants"
-echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "yes"
+	echo    # (optional) move to a new line
+	echo "Searching $GeminiDB for variants"
+    echo    # (optional) move to a new line
 	#Export known SNPs from this gene
 	echo "Exporting all known variants seen in the data set..."
 	#Check if the file alredy exists to save time
@@ -57,5 +62,3 @@ then
 	fi
 	echo "Complete."
 fi
-
-#Change line 18 so it gets the header from elsewhere so it's always current

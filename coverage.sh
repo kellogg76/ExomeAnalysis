@@ -39,26 +39,26 @@ then
 	mkdir /mnt/d/GeneCoverage
 	#Export whole gene and exons to new bed files
 	echo "Exporting whole gene and exons to new bed files"
-	grep -w ${gene_name} /mnt/d/hg19/hg19_genes.bed >$OutputDir/${gene_name}_gene.bed
+	#grep -w ${gene_name} /mnt/d/hg19/hg19_genes.bed >$OutputDir/${gene_name}_gene.bed    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
 	grep -w ${gene_name} /mnt/d/hg19/hg19_exons.bed >$OutputDir/${gene_name}_exons.bed
 	#Remove "chr" from bed file
-	sed 's/chr//' $OutputDir/${gene_name}_gene.bed > $OutputDir/${gene_name}_gene_nochr.bed
+	#sed 's/chr//' $OutputDir/${gene_name}_gene.bed > $OutputDir/${gene_name}_gene_nochr.bed    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
 	sed 's/chr//' $OutputDir/${gene_name}_exons.bed > $OutputDir/${gene_name}_exons_nochr.bed
 	#Count coverage
 	echo "Calculating coverage of ${gene_name}."
-	samtools mpileup -f $FASTA -l $OutputDir/${gene_name}_gene_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_gene_coverage.txt
+	#samtools mpileup -f $FASTA -l $OutputDir/${gene_name}_gene_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_gene_coverage.txt    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
 	samtools mpileup -f $FASTA -l $OutputDir/${gene_name}_exons_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_exon_coverage.txt
-	echo "Coverage for complete gene:"
-	echo "Total Reads		Average Coverage Depth"
-	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt
+	#echo "Coverage for complete gene:"    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
+	#echo "Total Reads		Average Coverage Depth"    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
+	#awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt    ########Removed, not sure I'd ever want to do this for exome data, it would lower the average coverage
 	echo "Coverage for coding exons and UTR's only:"
 	echo "Total Reads		Average Coverage Depth"
 	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_exon_coverage.txt
 	#Delete temp files
-	rm $OutputDir/${gene_name}_gene.bed
-	rm $OutputDir/${gene_name}_gene_nochr.bed
-	rm $OutputDir/${gene_name}_exons.bed
-	rm $OutputDir/${gene_name}_exons_nochr.bed
+	#rm $OutputDir/${gene_name}_gene.bed
+	#rm $OutputDir/${gene_name}_gene_nochr.bed
+	#rm $OutputDir/${gene_name}_exons.bed
+	#rm $OutputDir/${gene_name}_exons_nochr.bed
 	report
 	echo "Complete."
 fi
