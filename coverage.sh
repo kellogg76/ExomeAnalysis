@@ -1,6 +1,13 @@
 #!/bin/bash
 #Script asks for gene name then searches the BAM file and provides coverage
 
+
+
+####################################
+## DOESN'T REALLY WORK WELL, THE .bed FILES IT MAKES ARE INACCURATE
+## USE coding_coverage.sh INSTEAD
+####################################
+
 echo "***************"
 echo "Mats Gene Coverage Calculator"
 echo "***************"
@@ -20,9 +27,9 @@ FASTA=/mnt/d/hg19/human_g1k_v37.fasta
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"  >> $OutputDir/${gene_name}_report.txt
 	printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"\
 	"${gene_name}"\
-	"Total Gene Coverage	Average Gene Coverage" > $OutputDir/${gene_name}_report.txt
-	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt >>$OutputDir/${gene_name}_report.txt
-	printf "Total Coding Coverage	Average Coding Coverage\n" >> $OutputDir/${gene_name}_report.txt
+	#"Total Gene Coverage	Average Gene Coverage" > $OutputDir/${gene_name}_report.txt
+	#awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt >>$OutputDir/${gene_name}_report.txt
+	#printf "Total Coding Coverage	Average Coding Coverage\n" >> $OutputDir/${gene_name}_report.txt
 	awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_exon_coverage.txt  >>$OutputDir/${gene_name}_report.txt
 	printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" >>$OutputDir/${gene_name}_report.txt
  }

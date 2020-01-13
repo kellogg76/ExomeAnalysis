@@ -1,9 +1,9 @@
 #!/bin/bash
 #Script takes file made by batch_coverage.sh and gives coverage for coding regions only
-#run ./coding_coverage2.sh sample_number eg ./coding_coverage2.sh 2450
+#run ./coding_coverage.sh sample_number eg ./coding_coverage.sh 2450
 
 <<to_add
-Add the ability to get co-ordinates from the hg19 whole exome fasta file.
+Add the ability to get co-ordinates from the hg19 whole exome fasta file for genes being searched instead of manually adding them
 to_add
 
 echo "***************"
