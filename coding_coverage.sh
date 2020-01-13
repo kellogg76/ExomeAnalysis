@@ -12,6 +12,8 @@ echo "***************"
 
 Sample=$1
 
+BamFile=/mnt/d/ExoneData/
+
 #Output Directory
 OutputDir=/mnt/d/BatchCoverage/$Sample
 
@@ -26,7 +28,7 @@ gene=NDP
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "X:43809044-43817892" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "X:43809044-43817892" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -377,10 +379,10 @@ awk '$2>=69990975 && $2<=69991435 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < 
 
 #Genes to run
 NDP
-FZD4
-LRP5
-TSPAN12
-ZNF408
-KIF11
-CTNNB1
-ATOH7
+#FZD4
+#LRP5
+#TSPAN12
+#ZNF408
+#KIF11
+#CTNNB1
+#ATOH7
