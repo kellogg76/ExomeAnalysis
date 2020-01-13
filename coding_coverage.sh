@@ -50,7 +50,7 @@ gene=FZD4
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "11:86662183-86666128" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "11:86662183-86666128" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -72,7 +72,7 @@ gene=LRP5
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "11:68,080,108-68,216,743" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "11:68,080,108-68,216,743" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -157,7 +157,7 @@ gene=TSPAN12
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "7:120,427,374-120,498,177" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "7:120,427,374-120,498,177" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -194,7 +194,7 @@ gene=ZNF408
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "11:46,722,644-46,727,466" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "11:46,722,644-46,727,466" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -225,7 +225,7 @@ gene=KIF11
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "10:94,352,825-94,415,152" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b$BamFile/$Sample.recalibrated.sorted.bam "10:94,352,825-94,415,152" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -307,7 +307,7 @@ gene=CTNNB1
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "3:41,240,942-41,281,939" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "3:41,240,942-41,281,939" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -362,7 +362,7 @@ gene=ATOH7
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b /mnt/d/$Sample.recalibrated.sorted.bam "10:69,990,352-69,991,870" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "10:69,990,352-69,991,870" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
@@ -379,10 +379,10 @@ awk '$2>=69990975 && $2<=69991435 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < 
 
 #Genes to run
 NDP
-#FZD4
-#LRP5
-#TSPAN12
-#ZNF408
-#KIF11
-#CTNNB1
-#ATOH7
+FZD4
+LRP5
+TSPAN12
+ZNF408
+KIF11
+CTNNB1
+ATOH7
