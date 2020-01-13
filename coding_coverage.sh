@@ -225,7 +225,7 @@ gene=KIF11
 echo $gene
 #Cut bam
 echo "Extracting portion of bam file"
-samtools view -b$BamFile/$Sample.recalibrated.sorted.bam "10:94,352,825-94,415,152" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
+samtools view -b $BamFile/$Sample.recalibrated.sorted.bam "10:94,352,825-94,415,152" > /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
 #Index new bam
 echo "Indexing bam file"
 samtools index /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam
