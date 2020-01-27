@@ -14,7 +14,7 @@ echo "***************"
 Sample=$1
 
 #Bam file name
-BamToSearch=/mnt/d/${Sample}_sorted.bam
+BamToSearch=/mnt/d/ExomeData/${Sample}_sorted.bam
 
 #List of Genes
 GeneList=/mnt/d/JR_gene_list.txt

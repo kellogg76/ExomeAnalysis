@@ -12,7 +12,7 @@ echo "***************"
 
 Sample=$1
 
-BamFile=/mnt/d/ExomeData/
+BamFile=/mnt/d/ExomeData
 
 #Output Directory
 OutputDir=/mnt/d/BatchCoverage/$Sample

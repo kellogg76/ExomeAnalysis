@@ -404,23 +404,23 @@ echo "...complete."
 ##########################
 timestamp
 #catenation
-#bwa_step
-#read_groups
-#build_bam_index
-#mark_duplicates
-#realigner1
-#realigner2
-#recalibration
-#variant_calling
-#SNPEff
-#Gemini_update
-#Gemini_db
-#Gemini_export
-#######coverage ###Not working yet for hg19
-######vep  ###Not working yet
-#specific_coverage
-#merge_FEVR
-#manta
+bwa_step
+read_groups
+build_bam_index
+mark_duplicates
+realigner1
+realigner2
+recalibration
+variant_calling
+SNPEff
+Gemini_update
+Gemini_db
+Gemini_export
+######coverage ###Not working yet for hg19
+#####vep  ###Not working yet
+###specific_coverage  #Rarely used
+merge_FEVR
+###manta  #Rarely used
 FEVR_export
 
 #Generate Report Files
