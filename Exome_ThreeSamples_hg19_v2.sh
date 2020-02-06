@@ -3,6 +3,10 @@
 #Command to run this script is ./Exome_ThreeSamples_hg19_v2.sh sample1 sample2 sample3
 #eg ./Exome_ThreeSamples_hg19_v2.sh 549 F10-018 2644
 
+<<to_add
+Add ability to call coding_coverage.sh and then Coverage_plot.R script
+to_add
+
 echo "***************"
 echo "Mats Exome Pipeline"
 echo "This pipeline uses hg19 for all analysis"
@@ -324,11 +328,24 @@ samtools mpileup -r 'chr1:1,958,700-1,958,907' $runpath/$sample1.realigned.sorte
 
 merge_FEVR(){
 #Merge VCF's into large FEVR database
-bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
-bcftools index $runpath/$RunCode.snpEff.vcf.gz
-bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
+#bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
+#bcftools index $runpath/$RunCode.snpEff.vcf.gz
+echo "Copying last FEVR.combined.vcf"
+cp $buildpath/FEVR.combined.vcf.gz $runpath/FEVR.combined.vcf.gz
+echo "done."
+echo "Indexing with tabix"
+tabix -fp vcf $runpath/FEVR.combined.vcf.gz
+echo "done."
 #Merge new VCF into a new FEVR.combined.gemini.db
- gemini load -v $buildpath/FEVR.combined.vcf -t snpEff --cores 8 $buildpath/FEVR.combined.gemini.db
+echo "Merging"
+bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz $runpath/FEVR.combined.vcf.gz >$runpath/$RunCode.combined.vcf 
+echo "done."
+#Copy the previous gemini db file
+cp $buildpath/FEVR.combined.gemini.db $runpath/$RunCode.FEVR.combined.gemini.db
+#Create a new gemini db from the newly merged vcf
+gemini load -v $runpath/$RunCode.FEVR.combined.vcf -t snpEff --cores 8 $runpath/$RunCode.FEVR.combined.gemini.db
+#Copy the new gemini db to hg19 folder
+cp $runpath/$RunCode.FEVR.combined.gemini.db $buildpath/FEVR.combined.gemini.db
 }
 
 
