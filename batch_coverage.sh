@@ -4,7 +4,6 @@
 
 <<to_add
 list sample BAM's in a text file just like gene list
-
 to_add
 
 echo "***************"
@@ -14,7 +13,7 @@ echo "***************"
 Sample=$1
 
 #Bam file name
-BamToSearch=/mnt/d/ExomeData/${Sample}_sorted.bam
+BamToSearch=/mnt/d/FEVR99/${Sample}.recalibrated.sorted.bam
 
 #List of Genes
 GeneList=/mnt/d/JR_gene_list.txt
@@ -70,7 +69,7 @@ do
   #Count coverage
    echo "Calculating coverage of ${gene_name}."
    #samtools mpileup -f $FASTA -l $OutputDir/${gene_name}_gene_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_gene_coverage.txt
-   samtools mpileup -Q 1 -f  $FASTA -l $OutputDir/${gene_name}_exons_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_exon_coverage2.txt
+   samtools mpileup -Q 1 -f  $FASTA -l $OutputDir/${gene_name}_exons_nochr.bed $BamToSearch > $OutputDir/${gene_name}_total_exon_coverage.txt
    #echo "Coverage for complete gene:"
    #echo "Total Reads		Average Coverage Depth"
    #awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}' $OutputDir/${gene_name}_total_gene_coverage.txt

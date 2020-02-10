@@ -13,7 +13,7 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR15
+RunCode=FEVR99
 
 #Enter sample names below
 sample1=$1
@@ -326,27 +326,46 @@ specific_coverage(){
 samtools mpileup -r 'chr1:1,958,700-1,958,907' $runpath/$sample1.realigned.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
 }
 
-merge_FEVR(){
-#Merge VCF's into large FEVR database
-#bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
-#bcftools index $runpath/$RunCode.snpEff.vcf.gz
-echo "Copying last FEVR.combined.vcf"
+merge_FEVR(){ 
+echo "Copying previous combined VCF from $buildpath/FEVR.combined.vcf.gz"
 cp $buildpath/FEVR.combined.vcf.gz $runpath/FEVR.combined.vcf.gz
+echo "Unpacking $buildpath/FEVR.combined.vcf.gz"
+bgzip -d $runpath/FEVR.combined.vcf.gz
+echo "bgzip-ing $buildpath/FEVR.combined.vcf"
+bgzip $runpath/FEVR.combined.vcf
+echo "tabix $buildpath/FEVR.combined.vcf"
+tabix -p vcf $runpath/FEVR.combined.vcf.gz
 echo "done."
-echo "Indexing with tabix"
-tabix -fp vcf $runpath/FEVR.combined.vcf.gz
-echo "done."
-#Merge new VCF into a new FEVR.combined.gemini.db
+
+#Bgzip and Index snpEff file
+echo "bgzip, index snpEff files"
+bgzip $runpath/$RunCode.snpEff.vcf
+tabix -p vcf $runpath/$RunCode.snpEff.vcf.gz
+echo "done."  
+
+#Merge new VCF into a new FEVR.combined.gemini.db 
 echo "Merging"
-bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz $runpath/FEVR.combined.vcf.gz >$runpath/$RunCode.combined.vcf 
+bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz $runpath/FEVR.combined.vcf.gz > $runpath/$RunCode.combined.vcf 
+bgzip $runpath/$RunCode.combined.vcf 
 echo "done."
+echo "Copying new merged file back to hg19"
+cp $runpath/$RunCode.combined.vcf.gz $buildpath/FEVR.combined.vcf.gz
+
+
 #Copy the previous gemini db file
-cp $buildpath/FEVR.combined.gemini.db $runpath/$RunCode.FEVR.combined.gemini.db
-#Create a new gemini db from the newly merged vcf
-gemini load -v $runpath/$RunCode.FEVR.combined.vcf -t snpEff --cores 8 $runpath/$RunCode.FEVR.combined.gemini.db
+echo "Copying combined Gemini DB"
+cp $buildpath/FEVR.combined.gemini.db $runpath/$RunCode.FEVR.combined.gemini.db 
+
+#Create a new gemini db from the newly merged vcf 
+echo "Unpacking $runpath/$RunCode.FEVR.combined.vcf.gz"
+bgzip -d $runpath/FEVR.combined.vcf.gz
+
+echo "Create a new Gemini DB"
+gemini load -v $runpath/FEVR.combined.vcf -t snpEff --cores 8 $runpath/$RunCode.FEVR.combined.gemini.db
+
 #Copy the new gemini db to hg19 folder
 cp $runpath/$RunCode.FEVR.combined.gemini.db $buildpath/FEVR.combined.gemini.db
-}
+} 
 
 
 
@@ -421,30 +440,33 @@ echo "...complete."
 ##########################
 timestamp
 #catenation
-bwa_step
-read_groups
-build_bam_index
-mark_duplicates
-realigner1
-realigner2
-recalibration
-variant_calling
-SNPEff
-Gemini_update
-Gemini_db
+#bwa_step
+#read_groups
+#build_bam_index
+#mark_duplicates
+#realigner1
+#realigner2
+#recalibration
+#variant_calling
+#SNPEff
+#Gemini_update
+#Gemini_db
 Gemini_export
 ######coverage ###Not working yet for hg19
 #####vep  ###Not working yet
 ###specific_coverage  #Rarely used
-merge_FEVR
+#merge_FEVR
+#test_function
 ###manta  #Rarely used
 FEVR_export
 
 #Generate Report Files
+report_start(){
 echo "***************"
 echo "Outputting Report files..."
 echo "***************"
 timestamp
+}
  
 report_header(){
  #Export nohup.out to text file
@@ -616,24 +638,29 @@ prediction_scores(){
  ###
 }
 
+report_end(){
+#Merge text reports
+cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt
+}
+
 #########################
 ###Select which reports to run###
 #########################
-#report_header
-#variant_count
-#snp_indel_count
-#severity
-#clinvar_variants
-#clinvar_pathogenic
+report_start
+report_header
+variant_count
+snp_indel_count
+severity
+clinvar_variants
+clinvar_pathogenic
 ##################prediction_scores -DOESN'T CURRENTLY WORK
-#clinvar_keyword
-#gemini_results
-#key_genes
-#report_subscript
-#report_supplemental
+clinvar_keyword
+gemini_results
+key_genes
+report_subscript
+report_supplemental
+Report_end
 
-#Merge text reports
-cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt
 
 echo "Finished."
 timestamp

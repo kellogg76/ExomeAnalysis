@@ -2,7 +2,7 @@
 #Script searches FEVR master Gemini DB for stop_gained variants
 
 echo "***************"
-echo "Mats FEVR Truncating Muation Searcher"
+echo "Mats FEVR Truncating Mutation Searcher"
 echo "***************"
 
 #Gemini DB to search
