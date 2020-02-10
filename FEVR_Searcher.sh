@@ -6,7 +6,7 @@ echo "Mats FEVR Mutation Searcher"
 echo "***************"
 
 #Gemini DB to search
-GeminiToSearch=/mnt/d/hg19/FEVR.combined.gemini.db
+GeminiToSearch=/mnt/d/FEVR.combined.gemini.db
 
 #Output Directory
 OutputDir=/mnt/d/FEVR_Searcher
