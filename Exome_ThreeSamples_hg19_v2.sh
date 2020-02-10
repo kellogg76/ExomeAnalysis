@@ -423,17 +423,17 @@ gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf
 grep -w -f  $GeneList $temppath/$RunCode.FEVR3_all_hom_alt.txt >> $temppath/FEVR3_email_hom_alt.txt
 
 #Merging Files
-cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/FEVRSample1_EMAIL.txt
-cat $temppath/FEVR2_email_hets.txt $temppath/FEVR2_email_non_homs.txt $temppath/FEVR2_email_hom_alt.txt > $temppath/FEVRSample2_EMAIL.txt
-cat $temppath/FEVR3_email_hets.txt $temppath/FEVR3_email_non_homs.txt $temppath/FEVR3_email_hom_alt.txt > $temppath/FEVRSample3_EMAIL.txt
+cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/$1_EMAIL.txt
+cat $temppath/FEVR2_email_hets.txt $temppath/FEVR2_email_non_homs.txt $temppath/FEVR2_email_hom_alt.txt > $temppath/$2_EMAIL.txt
+cat $temppath/FEVR3_email_hets.txt $temppath/FEVR3_email_non_homs.txt $temppath/FEVR3_email_hom_alt.txt > $temppath/$3_EMAIL.txt
 #Delete duplicate lines
-cat $temppath/FEVRSample1_EMAIL.txt | sort | uniq > $runpath/FEVRSample1_EMAIL.txt
-cat $temppath/FEVRSample2_EMAIL.txt | sort | uniq > $runpath/FEVRSample2_EMAIL.txt
-cat $temppath/FEVRSample3_EMAIL.txt | sort | uniq > $runpath/FEVRSample3_EMAIL.txt
+cat $temppath/$1_EMAIL.txt | sort | uniq > $runpath/$1_EMAIL.txt
+cat $temppath/$2_EMAIL.txt | sort | uniq > $runpath/$2_EMAIL.txt
+cat $temppath/$3_EMAIL.txt | sort | uniq > $runpath/$3_EMAIL.txt
 #Write Header
-echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample1_EMAIL.txt > temp && mv temp $runpath/FEVRSample1_EMAIL.txt
-echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample2_EMAIL.txt > temp && mv temp $runpath/FEVRSample2_EMAIL.txt
-echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample3_EMAIL.txt > temp && mv temp $runpath/FEVRSample3_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/$1_EMAIL.txt > temp && mv temp $runpath/$1_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/$2_EMAIL.txt > temp && mv temp $runpath/$2_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/$3_EMAIL.txt > temp && mv temp $runpath/$3_EMAIL.txt
 
 echo "...complete."
 }
