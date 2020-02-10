@@ -378,49 +378,49 @@ echo "***************"
 echo "Outputting FEVR files..."
 echo "***************"
 timestamp
-dos2unix /mnt/d/$GeneList
+dos2unix $GeneList
 
 #Heterozygous
 #Sample 1
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hets.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR1_all_hets.txt >> $temppath/FEVR1_email_hets.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR1_all_hets.txt >> $temppath/FEVR1_email_hets.txt
 #Sample 2
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_hets.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR2_all_hets.txt >> $temppath/FEVR2_email_hets.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR2_all_hets.txt >> $temppath/FEVR2_email_hets.txt
 #Sample 3
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_hets.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR3_all_hets.txt >> $temppath/FEVR3_email_hets.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR3_all_hets.txt >> $temppath/FEVR3_email_hets.txt
 
 #Non Homozygous
 #Sample1
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_non_homs.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR1_all_non_homs.txt >> $temppath/FEVR1_email_non_homs.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR1_all_non_homs.txt >> $temppath/FEVR1_email_non_homs.txt
 #Sample2
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_non_homs.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR2_all_non_homs.txt >> $temppath/FEVR2_email_non_homs.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR2_all_non_homs.txt >> $temppath/FEVR2_email_non_homs.txt
 #Sample3
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_non_homs.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR3_all_non_homs.txt >> $temppath/FEVR3_email_non_homs.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR3_all_non_homs.txt >> $temppath/FEVR3_email_non_homs.txt
 
 #Homozygous Alt
 #Sample1
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hom_alt.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR1_all_hom_alt.txt >> $temppath/FEVR1_email_hom_alt.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR1_all_hom_alt.txt >> $temppath/FEVR1_email_hom_alt.txt
 #Sample2
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample2 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample2 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR2_all_hom_alt.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR2_all_hom_alt.txt >> $temppath/FEVR2_email_hom_alt.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR2_all_hom_alt.txt >> $temppath/FEVR2_email_hom_alt.txt
 #Sample3
 gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample3 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample3 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR3_all_hom_alt.txt
-#Now extract only genes in /mnt/d/$GeneList
-grep -w -f  /mnt/d/$GeneList $temppath/$RunCode.FEVR3_all_hom_alt.txt >> $temppath/FEVR3_email_hom_alt.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $temppath/$RunCode.FEVR3_all_hom_alt.txt >> $temppath/FEVR3_email_hom_alt.txt
 
 #Merging Files
 cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/FEVRSample1_EMAIL.txt
@@ -454,7 +454,7 @@ timestamp
 #SNPEff
 #Gemini_update
 #Gemini_db
-Gemini_export
+#Gemini_export
 ######coverage ###Not working yet for hg19
 #####vep  ###Not working yet
 ###specific_coverage  #Rarely used
