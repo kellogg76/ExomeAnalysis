@@ -10,6 +10,7 @@ GeminiToSearch=/mnt/d/hg19/FEVR.combined.gemini.db
 
 #Output Directory
 OutputDir=/mnt/d/FEVR_Searcher
+mkdir $OutputDir
 
 #List of Genes
 GeneList=/mnt/d/JR_gene_list.txt
