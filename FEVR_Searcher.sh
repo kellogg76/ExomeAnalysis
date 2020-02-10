@@ -16,7 +16,7 @@ mkdir $OutputDir
 GeneList=/mnt/d/JR_gene_list.txt
 dos2unix $GeneList
  
-gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, impact, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01'" --header $GeminiToSearch > $OutputDir/FEVR.Combined.Variants.txt
+gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, impact, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header $GeminiToSearch > $OutputDir/FEVR.Combined.Variants.txt
 
 #Pull out column 4
 #cut -f4 < /mnt/d/Trunc_FEVR.txt > $OutputDir/stop_gain_genes.txt 
