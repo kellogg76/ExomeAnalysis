@@ -28,8 +28,9 @@ runpath=/mnt/d/$RunCode
 temppath=$runpath/temp
 mkdir -p $temppath
 
-#FEVR Gene List
-GeneList=/mnt/d/JR_gene_list.txt
+#Copy Latest FEVR Gene List
+cp /mnt/d/JR_gene_list.txt /$runpath/FEVR_gene_list.txt
+GeneList=/$runpath/FEVR_gene_list.txt
 
 ############
 #Tool Paths#
