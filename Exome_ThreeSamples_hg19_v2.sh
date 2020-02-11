@@ -327,7 +327,7 @@ python $DataPath/manta/runWorkflow.py
 python $DataPath/manta/runWorkflow.py
 }
 
-specific_coverage(){
+Specific_Coverage(){
 #The coverage of a specific region as defined by the PI
 #Count the total and averaged coverage 
 samtools mpileup -r 'chr1:1,958,700-1,958,907' $DataPath/$sample1.realigned.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
@@ -451,16 +451,16 @@ timestamp
 #Realigner_1
 #Realigner_2
 #Recalibration
-#Variant_Calling
-#SNPEff
-#Gemini_Update
-#Gemini_db
+Variant_Calling
+SNPEff
+Gemini_Update
+Gemini_db
 #Gemini_Export
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet
 #######Exomiser                    #Rarely used
 ###Manta  #Rarely used
-#######specific_coverage  #Rarely used
+#######Specific_Coverage  #Rarely used
 #Merge_FEVR_Files
 #FEVR_Email_Export
 
@@ -659,6 +659,7 @@ cat $TempPath/Pipeline_Commands.txt $TempPath/Report_Header.txt $TempPath/Varian
 #Clinvar_Pathogenic
 ##################prediction_scores -DOESN'T CURRENTLY WORK
 #Clinvar_Keyword
+#exome_coverage #Does this even get used?
 #Gemini_Results
 #Key_Genes
 #Report_Supplemental
