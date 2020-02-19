@@ -1,9 +1,9 @@
 #Set working directory
-setwd("D:/BatchCoverage/F10-018")
+setwd("D:/BatchCoverage/F10_001")
 
 #File that this code reads is from coding_coverage.sh
 
-sample<-"F10-018"
+sample<-"F10_001"
 
 #########
 #NDP data
@@ -15,8 +15,9 @@ NDP_df <- read.csv2(NDP, sep = '\t', header = F)
 #PDF setup as 4 rows, 2 columns
 pdf("NDP_coverage.pdf",width=10,height=16, title="NDP")
 par(mfrow=c(4,2))
-plot(x = NDP_df$V2, type = "l", y = NDP_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(43817717,43817892), col = "#3366CC", main="NDP Exon 1")
-plot(x = NDP_df$V2, type = "l", y = NDP_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(43809044,43809273), col = "#3366CC", main="NDP Exon 1")
+par(mar = c(5,4,2,2))
+plot(x = NDP_df$V2, type = "l", y = NDP_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(43817718,43817891), col = "#3366CC", main="NDP Exon 1")
+plot(x = NDP_df$V2, type = "l", y = NDP_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(43809045,43809272), col = "#3366CC", main="NDP Exon 2")
 dev.off()
 
 #########
@@ -26,7 +27,7 @@ ATOH7<-paste(sample,"_ATOH7_Exons.txt", sep="")
 ATOH7_df <- read.csv2(ATOH7, sep = '\t', header = F)
 pdf("ATOH7_coverage.pdf",width=10,height=16, title="NDP")
 par(mfrow=c(4,2))
-plot(x = ATOH7_df$V2, type = "l", y = ATOH7_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(69990975,69991435), col = "#3366CC", main="ATOH7 Exon 1")
+plot(x = ATOH7_df$V2, type = "l", y = ATOH7_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(69990976,69991434), col = "#3366CC", main="ATOH7 Exon 1")
 dev.off()
 
 #########
@@ -36,11 +37,11 @@ ZNF408<-paste(sample,"_ZNF408_Exons.txt", sep="")
 ZNF408_df <- read.csv2(ZNF408, sep = '\t', header = F)
 pdf("ZNF408_coverage.pdf",width=10,height=16, title="ZNF408")
 par(mfrow=c(4,2))
-plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46722663,46722692), col = "#3366CC", main="ZNF408 Exon 1")
-plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46722948,46723227), col = "#3366CC", main="ZNF408 Exon 2")
-plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46724253,46724316), col = "#3366CC", main="ZNF408 Exon 3")
-plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46724533,46724793), col = "#3366CC", main="ZNF408 Exon 4")
-plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46725902,46727414), col = "#3366CC", main="ZNF408 Exon 5")
+plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46722664,46722691), col = "#3366CC", main="ZNF408 Exon 1")
+plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46722949,46723226), col = "#3366CC", main="ZNF408 Exon 2")
+plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46724254,46724315), col = "#3366CC", main="ZNF408 Exon 3")
+plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46724534,46724793), col = "#3366CC", main="ZNF408 Exon 4")
+plot(x = ZNF408_df$V2, type = "l", y = ZNF408_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(46725903,46727413), col = "#3366CC", main="ZNF408 Exon 5")
 dev.off() 
 
 #########
@@ -93,13 +94,13 @@ TSPAN12<-paste(sample,"_TSPAN12_Exons.txt", sep="")
 TSPAN12_df <- read.csv2(TSPAN12, sep = '\t', header = F)
 pdf("TSPAN12_coverage.pdf",width=10,height=16, title="TSPAN12")
 par(mfrow=c(4,2))
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120496751,120496818), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120480080,120480163), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120478830,120478967), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120455782,120455858), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120450516,120450625), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120446602,120446747), col = "#3366CC", main="TSPAN12 Exon 23")
-plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120428645,120428952), col = "#3366CC", main="TSPAN12 Exon 23")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120496751,120496818), col = "#3366CC", main="TSPAN12 Exon 01")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120480080,120480163), col = "#3366CC", main="TSPAN12 Exon 02")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120478830,120478967), col = "#3366CC", main="TSPAN12 Exon 03")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120455782,120455858), col = "#3366CC", main="TSPAN12 Exon 04")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120450516,120450625), col = "#3366CC", main="TSPAN12 Exon 05")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120446602,120446747), col = "#3366CC", main="TSPAN12 Exon 06")
+plot(x = TSPAN12_df$V2, type = "l", y = TSPAN12_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(120428645,120428952), col = "#3366CC", main="TSPAN12 Exon 07")
 dev.off()
 
 #########

@@ -246,8 +246,8 @@ Gemini_db(){
  echo "Gemini database creation"
  echo "***************"
 timestamp
- gemini load -v $DataPath/$RunCode.snpEff.vcf -t snpEff --cores 8 $DataPath/$RunCode.gemini.db
- echo "...complete."
+gemini load -v $DataPath/$RunCode.snpEff.vcf -t snpEff --cores 8 $DataPath/$RunCode.gemini.db
+echo "...complete."
 }
 
 Gemini_Export(){
@@ -373,6 +373,22 @@ gemini load -v $DataPath/FEVR.combined.vcf -t snpEff --cores 8 $DataPath/$RunCod
 cp $DataPath/$RunCode.FEVR.combined.gemini.db $hg19_BuildPath/FEVR.combined.gemini.db
 } 
 
+test_function(){
+#Copy old VCF file
+echo "Copying previous combined VCF from $hg19_BuildPath/FEVR.combined.vcf.gz"
+cp $hg19_BuildPath/FEVR.combined.vcf.gz $DataPath/FEVR.combined.vcf.gz
+
+#Merge VCF’s (VCF must be zipped)
+bgzip $DataPath/$RunCode.snpEff.vcf
+bcftools index $DataPath/$RunCode.snpEff.vcf.gz
+bcftools merge -m id $DataPath/$RunCode.snpEff.vcf.gz $DataPath/FEVR.combined.vcf.gz > $DataPath/new_combined.vcf.gz
+
+#Convert merged VCF into Gemini DB
+ gemini load -v $DataPath/new_combined.vcf.gz -t snpEff --cores 8 $DataPath/FEVR1-$RunCode.gemini.db
+ 
+ #copy the  new file back to hg19
+ 
+}
 FEVR_Email_Export(){
  #Output FEVR Email Files
 echo "***************"
@@ -451,10 +467,10 @@ timestamp
 #Realigner_1
 #Realigner_2
 #Recalibration
-Variant_Calling
-SNPEff
-Gemini_Update
-Gemini_db
+#Variant_Calling
+#SNPEff
+#Gemini_Update
+#Gemini_db
 #Gemini_Export
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet
@@ -463,6 +479,7 @@ Gemini_db
 #######Specific_Coverage  #Rarely used
 #Merge_FEVR_Files
 #FEVR_Email_Export
+test_function
 
 #Generate Report Files
 Report_Start(){

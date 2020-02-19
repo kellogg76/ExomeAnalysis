@@ -4,6 +4,7 @@
 
 <<to_add
 Add the ability to get co-ordinates from the hg19 whole exome fasta file for genes being searched instead of manually adding them
+Check if the donkey work has already been done
 to_add
 
 echo "***************"
@@ -39,10 +40,10 @@ samtools depth -Q 0 /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam > /
 #Calculate Max, Min and Mean coverage
 printf "Min	Max	Mean\n" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 printf "Exon 1	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=43817717 && $2<=43817892 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=43817718 && $2<=43817891 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 #Count coverage
 printf "Exon 2	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=43809044 && $2<=43809273 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=43809045 && $2<=43809272 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 }
 
 FZD4(){
@@ -205,19 +206,19 @@ samtools depth -Q 0 /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam > /
 #Calculate Max, Min and Mean coverage
 printf "Min	Max	Mean\n" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 printf "Exon 1	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=46722663 && $2<=46722692 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=46722664 && $2<=46722691 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 #Count coverage
 printf "Exon 2	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=46722948 && $2<=46723227 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=46722949 && $2<=46723226 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 #Count coverage
 printf "Exon 3	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=46724253 && $2<=46724316 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=46724254 && $2<=46724315 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 #Count coverage
 printf "Exon 4	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=46724533 && $2<=46724793 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=46724534 && $2<=46724793 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 #Count coverage
 printf "Exon 5	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=46725902 && $2<=46727414 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=46725903 && $2<=46727413 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 }
 
 KIF11(){
@@ -373,7 +374,7 @@ samtools depth -Q 0 /mnt/d/BatchCoverage/$Sample/${Sample}_${gene}_Exons.bam > /
 #Calculate Max, Min and Mean coverage
 printf "Min	Max	Mean\n" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 printf "Exon 1	" >> $OutputDir/${Sample}_${gene}_Exon_Coverage.txt
-awk '$2>=69990975 && $2<=69991435 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
+awk '$2>=69990976 && $2<=69991434 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' /mnt/d/BatchCoverage/${Sample}/${Sample}_${gene}_Exons.txt >>$OutputDir/${Sample}_${gene}_Exon_Coverage.txt
 }
 
 
