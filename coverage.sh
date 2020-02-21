@@ -1,8 +1,6 @@
 #!/bin/bash
 #Script asks for gene name then searches the BAM file and provides coverage
 
-
-
 ####################################
 ## DOESN'T REALLY WORK WELL, THE .bed FILES IT MAKES ARE INACCURATE
 ## USE coding_coverage.sh INSTEAD

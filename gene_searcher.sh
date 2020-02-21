@@ -3,6 +3,7 @@
 
 <<to_add
 #Change line 22 so it gets the header from elsewhere so it's always current
+bcftools query -l input.vcf
 to_add
 
 echo "***************"
@@ -14,7 +15,7 @@ OutputDir=/mnt/d/GeneSearcher
 mkdir $OutputDir
 
 #Gemini Database File
-GeminiDB=/mnt/d/hg19/FEVR.combined.gemini.db
+GeminiDB=/mnt/d/hg19/FEVR1-17.gemini.db
 
 export_SNPs(){
 	echo "Extracting variants seen in" $gene_name
@@ -52,14 +53,15 @@ then
 	echo "Exporting all known variants seen in the data set..."
 	#Check if the file alredy exists to save time
 	if test -f "$OutputDir/all_variants.txt"; then
-		echo "file exists"
+		echo "The file already exists."
+		echo "All files from this export can be found in $OutputDir"
 		export_SNPs
 		file_stripper
 	else
 		gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header $GeminiDB > $OutputDir/all_variants.txt
 		export_SNPs
 		file_stripper
-		echo "All files from this search can be found in $OutputDir"
+		echo "All files from this export can be found in $OutputDir"
 	fi
 	echo "Complete."
 fi
