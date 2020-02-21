@@ -1,5 +1,5 @@
 #!/bin/bash
-#Script asks for gene name then searches a gemini.db for all hits in that gene
+#Script  searches a gemini.db for all hits in that gene
 #./gene_serarcher.sh CTC1
 
 <<to_add
