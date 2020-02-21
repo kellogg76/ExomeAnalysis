@@ -4,6 +4,9 @@
 <<to_add
 #Change line 22 so it gets the header from elsewhere so it's always current
 bcftools query -l input.vcf
+
+variable for max_aaf_all
+$1 in start command so gene is entered at start
 to_add
 
 echo "***************"
@@ -20,7 +23,7 @@ GeminiDB=/mnt/d/hg19/FEVR1-17.gemini.db
 export_SNPs(){
 	echo "Extracting variants seen in" $gene_name
 	grep -w $gene_name $OutputDir/all_variants.txt >> $OutputDir/${gene_name}_variants.txt
-	echo 'chrom	start	end	gene	codon_change	aa_change	rs_ids	max_aaf_all	aaf_exac_all	gerp_bp_score	F10-033	F10-034	F10-035	F10-015	F10-017	F10-018	2542	648	F10-007	628	632	639	615	618	625	467	538	606	429	434	435	F10-028	F10-029	F10-030	F10-016	F10-026	F10-027	4585	4897	5300	2644	F10-021	F10-025	2450	2491	2534	1929	2153	2712	2543	3014	F10_001	F10-004	F10-005	F10-006	2515	3015	F10-003 452 453 454 364 425' | cat - $OutputDir/${gene_name}_variants.txt > temp && mv temp $OutputDir/${gene_name}_variants.txt
+	cat - $OutputDir/${gene_name}_variants.txt > temp && mv temp $OutputDir/${gene_name}_variants.txt
 #echo 'chrom	start	end	gene	codon_change	aa_change	rs_ids	max_aaf_all	aaf_exac_all	gerp_bp_score	F10-033	F10-034	F10-035	F10-015	F10-017	F10-018	2542	648	F10-007	628	632	639	615	618	625	467	538	606	429	434	435	F10-028	F10-029	F10-030	F10-016	F10-026	F10-027	4585	4897	5300	2644	F10-021	F10-025	2450	2491	2534	1929	2153	2712	2543	3014	F10_001	F10-004	F10-005	F10-006	2515	3015	F10-003 452 453 454 364 425' | cat - $OutputDir/${gene_name}_variants.txt > temp && mv temp $OutputDir/${gene_name}_variants.txt
 }
 
@@ -53,10 +56,9 @@ then
 	#Export known SNPs from this gene
 	echo "Exporting all known variants seen in the data set..."
 	#Check if the file alredy exists to save time
-	gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header $GeminiDB > $OutputDir/all_variants.txt
+	#gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header $GeminiDB > $OutputDir/all_variants.txt
 	export_SNPs
 	file_stripper
 	echo "All files from this export can be found in $OutputDir"
 	fi
 	echo "Complete."
-fi
