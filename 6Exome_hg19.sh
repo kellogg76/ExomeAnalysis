@@ -16,12 +16,15 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR22
+RunCode=FEVR18
 
 #Enter sample names below
 sample1=$1
 sample2=$2
 sample3=$3
+sample4=$4
+sample5=$5
+sample6=$6
 
 ###Paths to files###
 #Linux Paths
@@ -67,12 +70,6 @@ date +"%Y-%m-%d %H:%M:%S"
 "$Runcode Analysis Started.\n" > $TempPath/Pipeline_Commands.txt
 }
 
-# move files from sub folders
-move_fastq() {
-timestamp
-find $DataPath -type f -print0 | xargs -0 mv -t $DataPath
-}
-
 Catenation(){
 #Catenation
 echo "Catenating: " $sample1
@@ -100,7 +97,7 @@ rm $DataPath/$sample3\_S3_L001_R2_001.fastq.gz $DataPath/$sample3\_S3_L002_R2_00
 BWA_Step(){
 #BWA
 echo "*******************************"
-echo "*Processing Samples $sample1, $sample2, $sample3*"
+echo "*Processing Samples $sample1, $sample2, $sample3, $sample4, $sample5, $sample6*"
 echo "*******************************"
 echo "***************"
 echo "******BWA******"
@@ -112,6 +109,12 @@ echo "Recalibrating sample: " $sample2
 bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample2-R1.fastq.gz $DataPath/$sample2-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample2.bwa.sorted.bam -T $TempPath/$sample2.bwa.sort.temp
 echo "Recalibrating sample: " $sample3
 bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample3-R1.fastq.gz $DataPath/$sample3-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample3.bwa.sorted.bam -T $TempPath/$sample3.bwa.sort.temp
+echo "Recalibrating sample: " $sample4
+bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample4-R1.fastq.gz $DataPath/$sample4-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample4.bwa.sorted.bam -T $TempPath/$sample4.bwa.sort.temp
+echo "Recalibrating sample: " $sample5
+bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample5-R1.fastq.gz $DataPath/$sample5-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample5.bwa.sorted.bam -T $TempPath/$sample5.bwa.sort.temp
+echo "Recalibrating sample: " $sample6
+bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample6-R1.fastq.gz $DataPath/$sample6-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample6.bwa.sorted.bam -T $TempPath/$sample6.bwa.sort.temp
 }
 
 Read_Groups(){
@@ -126,6 +129,12 @@ echo "AddOrReplaceReadGroups sample: " $sample2
 java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample2.bwa.sorted.bam OUTPUT=$DataPath/$sample2.rg.sorted.bam RGID=$sample2 RGSM=$sample2 RGLB=$sample2 RGPL=illumina RGPU=miseq
 echo "AddOrReplaceReadGroups sample: " $sample3
 java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample3.bwa.sorted.bam OUTPUT=$DataPath/$sample3.rg.sorted.bam RGID=$sample3 RGSM=$sample3 RGLB=$sample3 RGPL=illumina RGPU=miseq
+echo "AddOrReplaceReadGroups sample: " $sample4
+java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample4bwa.sorted.bam OUTPUT=$DataPath/$sample4.rg.sorted.bam RGID=$sample4 RGSM=$sample4 RGLB=$sample4 RGPL=illumina RGPU=miseq
+echo "AddOrReplaceReadGroups sample: " $sample5
+java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample5.bwa.sorted.bam OUTPUT=$DataPath/$sample5.rg.sorted.bam RGID=$sample5 RGSM=$sample5 RGLB=$sample5 RGPL=illumina RGPU=miseq
+echo "AddOrReplaceReadGroups sample: " $sample6
+java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample6.bwa.sorted.bam OUTPUT=$DataPath/$sample6.rg.sorted.bam RGID=$sample6 RGSM=$sample6 RGLB=$sample6 RGPL=illumina RGPU=miseq
 }
 
 Build_BAM_Index(){
@@ -140,6 +149,12 @@ echo "BuildBamIndex sample: " $sample2
 java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample2.rg.sorted.bam
 echo "BuildBamIndex sample: " $sample3
 java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample3.rg.sorted.bam
+echo "BuildBamIndex sample: " $sample4
+java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample4.rg.sorted.bam
+echo "BuildBamIndex sample: " $sample5
+java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample5.rg.sorted.bam
+echo "BuildBamIndex sample: " $sample6
+java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample6.rg.sorted.bam
 }
 
 Mark_Duplicates(){
@@ -154,6 +169,12 @@ echo "MarkDuplicates sample: " $sample2
 java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample2.dedup.metrics INPUT=$DataPath/$sample2.rg.sorted.bam OUTPUT=$DataPath/$sample2.dedup.sorted.bam
 echo "MarkDuplicates sample: " $sample3
 java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample3.dedup.metrics INPUT=$DataPath/$sample3.rg.sorted.bam OUTPUT=$DataPath/$sample3.dedup.sorted.bam
+echo "MarkDuplicates sample: " $sample4
+java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample4.dedup.metrics INPUT=$DataPath/$sample4.rg.sorted.bam OUTPUT=$DataPath/$sample4.dedup.sorted.bam
+echo "MarkDuplicates sample: " $sample5
+java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample5.dedup.metrics INPUT=$DataPath/$sample5.rg.sorted.bam OUTPUT=$DataPath/$sample5.dedup.sorted.bam
+echo "MarkDuplicates sample: " $sample6
+java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample6.dedup.metrics INPUT=$DataPath/$sample6.rg.sorted.bam OUTPUT=$DataPath/$sample6.dedup.sorted.bam
 }
 
 Realigner_1(){
@@ -168,6 +189,12 @@ echo "RealignerTargetCreator sample: " $sample2
 java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample2.dedup.sorted.bam -o $DataPath/$sample2.targets.intervals -known $INDELS -known $G1000 -nt 7
 echo "RealignerTargetCreator sample: " $sample3
 java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample3.dedup.sorted.bam -o $DataPath/$sample3.targets.intervals -known $INDELS -known $G1000 -nt 7
+echo "RealignerTargetCreator sample: " $sample4
+java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample4.dedup.sorted.bam -o $DataPath/$sample4.targets.intervals -known $INDELS -known $G1000 -nt 7
+echo "RealignerTargetCreator sample: " $sample5
+java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample5.dedup.sorted.bam -o $DataPath/$sample5.targets.intervals -known $INDELS -known $G1000 -nt 7
+echo "RealignerTargetCreator sample: " $sample6
+java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample6.dedup.sorted.bam -o $DataPath/$sample6.targets.intervals -known $INDELS -known $G1000 -nt 7
 }
 
 Realigner_2(){
@@ -182,6 +209,12 @@ echo "IndelRealigner sample: " $sample2
 java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample2.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample2.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample2.realigned.sorted.bam
 echo "IndelRealigner sample: " $sample3
 java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample3.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample3.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample3.realigned.sorted.bam
+echo "IndelRealigner sample: " $sample4
+java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample4.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample4.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample4.realigned.sorted.bam
+echo "IndelRealigner sample: " $sample5
+java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample5.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample5.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample5.realigned.sorted.bam
+echo "IndelRealigner sample: " $sample6
+java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample6.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample6.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample6.realigned.sorted.bam
 }
 
 Recalibration(){
@@ -199,6 +232,15 @@ java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample2.realigned.s
 echo "Recalibrating sample: " $sample3
 java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample3.realigned.sorted.bam -o $DataPath/$sample3.recal --knownSites $dbSNP -nct 7
 java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample3.realigned.sorted.bam -o $DataPath/$sample3.recalibrated.sorted.bam -BQSR $DataPath/$sample3.recal -nct 7
+echo "Recalibrating sample: " $sample4
+java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample4.realigned.sorted.bam -o $DataPath/$sample4.recal --knownSites $dbSNP -nct 7
+java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample4.realigned.sorted.bam -o $DataPath/$sample4.recalibrated.sorted.bam -BQSR $DataPath/$sample4.recal -nct 7
+echo "Recalibrating sample: " $sample5
+java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample5.realigned.sorted.bam -o $DataPath/$sample5.recal --knownSites $dbSNP -nct 7
+java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample5.realigned.sorted.bam -o $DataPath/$sample5.recalibrated.sorted.bam -BQSR $DataPath/$sample5.recal -nct 7
+echo "Recalibrating sample: " $sample6
+java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample6.realigned.sorted.bam -o $DataPath/$sample6.recal --knownSites $dbSNP -nct 7
+java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample6.realigned.sorted.bam -o $DataPath/$sample6.recalibrated.sorted.bam -BQSR $DataPath/$sample6.recal -nct 7
 }
 
 Variant_Calling(){
@@ -456,19 +498,21 @@ echo "...complete."
 ###Select which functions to run###
 ##########################
 timestamp
-#move_fastq
 #Catenation
-#BWA_Step
-#Read_Groups
-#Build_BAM_Index
-#Mark_Duplicates
-#Realigner_1
-#Realigner_2
-#Recalibration    #Stop here if doing larger pools
+BWA_Step
+Read_Groups
+Build_BAM_Index
+Mark_Duplicates
+Realigner_1
+Realigner_2
+Recalibration
+
+#Code only altered up to here for 6 samples
+
 #Variant_Calling
-SNPEff
-Gemini_Update
-Gemini_db
+#SNPEff
+#Gemini_Update
+#Gemini_db
 #Gemini_Export
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet

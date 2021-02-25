@@ -16,12 +16,19 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR22
+RunCode=FEVR18
 
 #Enter sample names below
 sample1=$1
 sample2=$2
 sample3=$3
+sample4=$4
+sample5=$5
+sample1=$6
+sample2=$7
+sample3=$8
+sample4=$9
+sample5=$10
 
 ###Paths to files###
 #Linux Paths
@@ -67,139 +74,7 @@ date +"%Y-%m-%d %H:%M:%S"
 "$Runcode Analysis Started.\n" > $TempPath/Pipeline_Commands.txt
 }
 
-# move files from sub folders
-move_fastq() {
-timestamp
-find $DataPath -type f -print0 | xargs -0 mv -t $DataPath
-}
 
-Catenation(){
-#Catenation
-echo "Catenating: " $sample1
-cat $DataPath/$sample1\_S1_L001_R1_001.fastq.gz $DataPath/$sample1\_S1_L002_R1_001.fastq.gz $DataPath/$sample1\_S1_L003_R1_001.fastq.gz $DataPath/$sample1\_S1_L004_R1_001.fastq.gz > $DataPath/$sample1-R1.fastq.gz
-cat $DataPath/$sample1\_S1_L001_R2_001.fastq.gz $DataPath/$sample1\_S1_L002_R2_001.fastq.gz $DataPath/$sample1\_S1_L003_R2_001.fastq.gz $DataPath/$sample1\_S1_L004_R2_001.fastq.gz > $DataPath/$sample1-R2.fastq.gz
-echo "Catenating: " $sample2
-cat $DataPath/$sample2\_S2_L001_R1_001.fastq.gz $DataPath/$sample2\_S2_L002_R1_001.fastq.gz $DataPath/$sample2\_S2_L003_R1_001.fastq.gz $DataPath/$sample2\_S2_L004_R1_001.fastq.gz > $DataPath/$sample2-R1.fastq.gz
-cat $DataPath/$sample2\_S2_L001_R2_001.fastq.gz $DataPath/$sample2\_S2_L002_R2_001.fastq.gz $DataPath/$sample2\_S2_L003_R2_001.fastq.gz $DataPath/$sample2\_S2_L004_R2_001.fastq.gz > $DataPath/$sample2-R2.fastq.gz
-echo "Catenating: " $sample3
-cat $DataPath/$sample3\_S3_L001_R1_001.fastq.gz $DataPath/$sample3\_S3_L002_R1_001.fastq.gz $DataPath/$sample3\_S3_L003_R1_001.fastq.gz $DataPath/$sample3\_S3_L004_R1_001.fastq.gz > $DataPath/$sample3-R1.fastq.gz
-cat $DataPath/$sample3\_S3_L001_R2_001.fastq.gz $DataPath/$sample3\_S3_L002_R2_001.fastq.gz $DataPath/$sample3\_S3_L003_R2_001.fastq.gz $DataPath/$sample3\_S3_L004_R2_001.fastq.gz > $DataPath/$sample3-R2.fastq.gz
-
-#Add code to delete the uncatenated files
-echo "Deleting uncatenated files for: " $sample1
-rm $DataPath/$sample1\_S1_L001_R1_001.fastq.gz $DataPath/$sample1\_S1_L002_R1_001.fastq.gz $DataPath/$sample1\_S1_L003_R1_001.fastq.gz $DataPath/$sample1\_S1_L004_R1_001.fastq.gz
-rm $DataPath/$sample1\_S1_L001_R2_001.fastq.gz $DataPath/$sample1\_S1_L002_R2_001.fastq.gz $DataPath/$sample1\_S1_L003_R2_001.fastq.gz $DataPath/$sample1\_S1_L004_R2_001.fastq.gz
-echo "Deleting uncatenated files for: " $sample2
-rm $DataPath/$sample2\_S2_L001_R1_001.fastq.gz $DataPath/$sample2\_S2_L002_R1_001.fastq.gz $DataPath/$sample2\_S2_L003_R1_001.fastq.gz $DataPath/$sample2\_S2_L004_R1_001.fastq.gz
-rm $DataPath/$sample2\_S2_L001_R2_001.fastq.gz $DataPath/$sample2\_S2_L002_R2_001.fastq.gz $DataPath/$sample2\_S2_L003_R2_001.fastq.gz $DataPath/$sample2\_S2_L004_R2_001.fastq.gz
-echo "Deleting uncatenated files for: " $sample3
-rm $DataPath/$sample3\_S3_L001_R1_001.fastq.gz $DataPath/$sample3\_S3_L002_R1_001.fastq.gz $DataPath/$sample3\_S3_L003_R1_001.fastq.gz $DataPath/$sample3\_S3_L004_R1_001.fastq.gz
-rm $DataPath/$sample3\_S3_L001_R2_001.fastq.gz $DataPath/$sample3\_S3_L002_R2_001.fastq.gz $DataPath/$sample3\_S3_L003_R2_001.fastq.gz $DataPath/$sample3\_S3_L004_R2_001.fastq.gz
-}
-
-BWA_Step(){
-#BWA
-echo "*******************************"
-echo "*Processing Samples $sample1, $sample2, $sample3*"
-echo "*******************************"
-echo "***************"
-echo "******BWA******"
-echo "***************"
-timestamp
-echo "Recalibrating sample: " $sample1
-bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample1-R1.fastq.gz $DataPath/$sample1-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample1.bwa.sorted.bam -T $TempPath/$sample1.bwa.sort.temp
-echo "Recalibrating sample: " $sample2
-bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample2-R1.fastq.gz $DataPath/$sample2-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample2.bwa.sorted.bam -T $TempPath/$sample2.bwa.sort.temp
-echo "Recalibrating sample: " $sample3
-bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample3-R1.fastq.gz $DataPath/$sample3-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample3.bwa.sorted.bam -T $TempPath/$sample3.bwa.sort.temp
-}
-
-Read_Groups(){
-#Add Or Replace Read Groups
-echo "************************"
-echo "*AddOrReplaceReadGroups*"
-timestamp
-echo "************************"
-echo "AddOrReplaceReadGroups sample: " $sample1
-java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample1.bwa.sorted.bam OUTPUT=$DataPath/$sample1.rg.sorted.bam RGID=$sample1 RGSM=$sample1 RGLB=$sample1 RGPL=illumina RGPU=miseq
-echo "AddOrReplaceReadGroups sample: " $sample2
-java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample2.bwa.sorted.bam OUTPUT=$DataPath/$sample2.rg.sorted.bam RGID=$sample2 RGSM=$sample2 RGLB=$sample2 RGPL=illumina RGPU=miseq
-echo "AddOrReplaceReadGroups sample: " $sample3
-java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample3.bwa.sorted.bam OUTPUT=$DataPath/$sample3.rg.sorted.bam RGID=$sample3 RGSM=$sample3 RGLB=$sample3 RGPL=illumina RGPU=miseq
-}
-
-Build_BAM_Index(){
-#Build BAM Index
-echo "*******************"
-echo "***BuildBamIndex***"
-echo "*******************"
-timestamp
-echo "BuildBamIndex sample: " $sample1
-java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample1.rg.sorted.bam
-echo "BuildBamIndex sample: " $sample2
-java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample2.rg.sorted.bam
-echo "BuildBamIndex sample: " $sample3
-java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample3.rg.sorted.bam
-}
-
-Mark_Duplicates(){
-#Mark Duplicates
-echo "*********************"
-echo "***Mark Duplicates***"
-echo "*********************"
-timestamp
-echo "MarkDuplicates sample: " $sample1
-java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample1.dedup.metrics INPUT=$DataPath/$sample1.rg.sorted.bam OUTPUT=$DataPath/$sample1.dedup.sorted.bam
-echo "MarkDuplicates sample: " $sample2
-java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample2.dedup.metrics INPUT=$DataPath/$sample2.rg.sorted.bam OUTPUT=$DataPath/$sample2.dedup.sorted.bam
-echo "MarkDuplicates sample: " $sample3
-java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample3.dedup.metrics INPUT=$DataPath/$sample3.rg.sorted.bam OUTPUT=$DataPath/$sample3.dedup.sorted.bam
-}
-
-Realigner_1(){
-#Realigner Target Creator
-echo "****************************"
-echo "***RealignerTargetCreator***"
-echo "****************************"
-timestamp
-echo "RealignerTargetCreator sample: " $sample1
-java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample1.dedup.sorted.bam -o $DataPath/$sample1.targets.intervals -known $INDELS -known $G1000 -nt 7
-echo "RealignerTargetCreator sample: " $sample2
-java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample2.dedup.sorted.bam -o $DataPath/$sample2.targets.intervals -known $INDELS -known $G1000 -nt 7
-echo "RealignerTargetCreator sample: " $sample3
-java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample3.dedup.sorted.bam -o $DataPath/$sample3.targets.intervals -known $INDELS -known $G1000 -nt 7
-}
-
-Realigner_2(){
-#Indel Realigner
-echo "********************"
-echo "***IndelRealigner***"
-echo "********************"
-timestamp
-echo "IndelRealigner sample: " $sample1
-java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample1.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample1.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample1.realigned.sorted.bam
-echo "IndelRealigner sample: " $sample2
-java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample2.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample2.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample2.realigned.sorted.bam
-echo "IndelRealigner sample: " $sample3
-java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample3.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample3.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample3.realigned.sorted.bam
-}
-
-Recalibration(){
-#Recalibration
-echo "***************"
-echo "Recalibration"
-echo "***************"
-timestamp
-echo "Recalibrating sample: " $sample1
-java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample1.realigned.sorted.bam -o $DataPath/$sample1.recal --knownSites $dbSNP -nct 7
-java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample1.realigned.sorted.bam -o $DataPath/$sample1.recalibrated.sorted.bam -BQSR $DataPath/$sample1.recal -nct 7
-echo "Recalibrating sample: " $sample2
-java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample2.realigned.sorted.bam -o $DataPath/$sample2.recal --knownSites $dbSNP -nct 7
-java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample2.realigned.sorted.bam -o $DataPath/$sample2.recalibrated.sorted.bam -BQSR $DataPath/$sample2.recal -nct 7
-echo "Recalibrating sample: " $sample3
-java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample3.realigned.sorted.bam -o $DataPath/$sample3.recal --knownSites $dbSNP -nct 7
-java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample3.realigned.sorted.bam -o $DataPath/$sample3.recalibrated.sorted.bam -BQSR $DataPath/$sample3.recal -nct 7
-}
 
 Variant_Calling(){
 #Variant Calling & Annotations
@@ -213,8 +88,27 @@ echo "Haplotype calling sample: " $sample2
 java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample2.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample2.haplotypecaller.g.vcf -nct 7
 echo "Haplotype calling sample: " $sample3
 java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample3.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample3.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample4
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample4.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample4.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample5
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample5.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample5.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample6
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample6.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample6.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample7
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample7.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample7.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample8
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample8.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample8.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample9
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample9.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample9.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample10
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample10.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample10.haplotypecaller.g.vcf -nct 7
+
+
+
 echo "Generating gVCF"
-java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $DataPath/$sample1.haplotypecaller.g.vcf --variant $DataPath/$sample2.haplotypecaller.g.vcf --variant $DataPath/$sample3.haplotypecaller.g.vcf -o $DataPath/$RunCode.haplotypecaller.vcf
+java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $DataPath/$sample1.haplotypecaller.g.vcf --variant $DataPath/$sample2.haplotypecaller.g.vcf --variant $DataPath/$sample3.haplotypecaller.g.vcf  --variant $DataPath/$sample4.haplotypecaller.g.vcf  --variant $DataPath/$sample5.haplotypecaller.g.vcf  --variant $DataPath/$sample6.haplotypecaller.g.vcf --variant $DataPath/$sample7.haplotypecaller.g.vcf  --variant $DataPath/$sample8.haplotypecaller.g.vcf --variant $DataPath/$sample9.haplotypecaller.g.vcf  --variant $DataPath/$sample10.haplotypecaller.g.vcf -o $DataPath/$RunCode.haplotypecaller.vcf
+
+
 echo "zless, sed etc"
 zless $DataPath/$RunCode.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r $FASTA - > $DataPath/$RunCode.hc.normalized.vcf
 echo "Variant annotator"
@@ -456,26 +350,20 @@ echo "...complete."
 ###Select which functions to run###
 ##########################
 timestamp
-#move_fastq
 #Catenation
-#BWA_Step
-#Read_Groups
-#Build_BAM_Index
-#Mark_Duplicates
-#Realigner_1
-#Realigner_2
-#Recalibration    #Stop here if doing larger pools
+
+
 #Variant_Calling
-SNPEff
-Gemini_Update
-Gemini_db
+#SNPEff
+#Gemini_Update
+#Gemini_db
 #Gemini_Export
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet
 #######Exomiser                    #Rarely used
 #######Manta                           #Rarely used
 #######Specific_Coverage  #Rarely used
-#Merge_FEVR_Files
+Merge_FEVR_Files
 #Files_To_Backup
 #FEVR_Email_Export
 #test_function

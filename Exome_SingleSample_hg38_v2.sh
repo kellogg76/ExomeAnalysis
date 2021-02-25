@@ -1,15 +1,23 @@
 #!/bin/bash
 
+#Doesn't work due to Gemini DB not having the frequency data for hg38, possibly due to snpEff not annotating correctly
+#All exports work but the  text files of variants are longer than expected as it's exporting all variants instead of those with matching max_aaf_all data
+
+
+
+#Command to run this script is ./Exome_SingleSample_hg38_v2.sh sample1
+#eg ./Exome_SingleSample_hg38_v2.sh 549
+
 echo "***************"
 echo "Mats Exome Pipeline"
 echo "This pipeline uses hg38 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVRhg38_test
+RunCode=Mat-hg38
 
 #Enter sample name below
-sample1=2644
+sample1=$1
 
 ###Paths to files###
 #Linux Paths
@@ -136,7 +144,6 @@ java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $runpath/$sample1.realigned.so
 }
 
 variant_calling(){
-####hg38 fails here :- File associated with name /mnt/d/hg38/hg38_ccds.bed is malformed: Problem reading the interval file caused by Badly formed genome location: Contig chr1_KN196472v1_fix given as location, but this contig isn't present in the Fasta sequence dictionary
 #Variant Calling & Annotations
 echo "***************"
 echo "Variant Calling & Annotations"
@@ -161,6 +168,9 @@ echo "***************"
 echo "SNPEff"
 echo "***************"
 timestamp
+echo "Updating snpEff"
+#java -jar snpEff.jar download hg38
+
 java -Xmx40g -jar $SNPEff hg38 $runpath/$RunCode.filtered.vcf > $runpath/$RunCode.snpEff.vcf
 mv snpEff_genes.txt $runpath/$RunCode.snpEff_genes.txt
 mv snpEff_summary.html $runpath/$RunCode.snpEff_summary.html
@@ -195,7 +205,7 @@ echo "***************"
 timestamp
 #Short Export
 #Heterozygous
-gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $runpath/$RunCode.het_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET" $runpath/$RunCode.gemini.db > $runpath/$RunCode.het_med_high_rare.txt
 
 #Non Homozygous
 gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $runpath/$RunCode.non_hom_med_high_rare.txt
@@ -245,6 +255,30 @@ exomiser(){
 java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample1.yml
 }
 
+test_func(){
+#Export snpEff databases
+#java -jar snpEff.jar databases > /mnt/d/snp_databases.txt
+
+#Download new database
+#java -Xmx4g -jar snpEff.jar download -c ~/snpEff/snpEff.config -v GRCh38.86
+
+#Run snpEff on GRCh38.86
+#java -Xmx40g -jar $SNPEff GRCh38.86 $runpath/$RunCode.filtered.vcf > $runpath/$RunCode.snpEff.GRCh38_86.vcf
+
+#Gemini
+#gemini load -v $runpath/$RunCode.snpEff.GRCh38_86.vcf -t snpEff --cores 8 $runpath/$RunCode.GRCh38_86.gemini.db
+
+#Heterozygous
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET" $runpath/$RunCode.GRCh38_86.gemini.db > $runpath/$RunCode.het_med_high_rare_GRCh38.86.txt
+
+#Non Homozygous
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.GRCh38_86.gemini.db > $runpath/$RunCode.non_hom_med_high_rare_GRCh38.86.txt
+
+#Homozygous
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.GRCh38_86.gemini.db > $runpath/$RunCode.hom_alt_med_high_rare_GRCh38.86.txt
+echo "...complete."
+}
+
 ##########################
 ###Select which functions to run###
 ##########################
@@ -265,6 +299,7 @@ timestamp
 #coverage 
 ######vep              ###Not working yet
 #specific_coverage
+test_func
 
 #Generate Report Files
 echo "***************"
@@ -426,19 +461,19 @@ printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 #########################
 ###Select which reports to run###
 #########################
-report_header
-variant_count
-snp_indel_count
-severity
-clinvar_variants
-clinvar_pathogenic
+#report_header
+#variant_count
+#snp_indel_count
+#severity
+#clinvar_variants
+#clinvar_pathogenic
 ####################prediction_scores -DOESN'T CURRENTLY WORK
-exome_coverage
-clinvar_keyword
-gemini_results
-key_genes
-report_subscript
-report_supplemental
+#exome_coverage
+#clinvar_keyword
+#gemini_results
+#key_genes
+#report_subscript
+#report_supplemental
 
 #Merge text reports
 cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt

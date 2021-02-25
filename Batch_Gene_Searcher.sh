@@ -3,25 +3,27 @@
 #./Batch_Gene_Searcher.sh
 
 echo "***************"
-echo "Mats FEVR Mutation Searcher"
+echo "Mats Mutation Searcher"
 echo "***************"
 
 #Gemini DB to search
-GeminiToSearch=/mnt/d/hg19/FEVR1-17.gemini.db
+GeminiToSearch=/mnt/d/hg19/FEVR1-23.combined.gemini.db
 
 #Max alternate allele frequency
 #1% = 0.01
 max_aaf=0.01
 
 #List of Genes
-GeneList=/mnt/d/JR_gene_list.txt
+GeneList=/mnt/d/GENE_LIST.txt
 
 #Output Directory
 OutputDir=/mnt/d/Batch_Gene_Searcher
+
 mkdir $OutputDir
 dos2unix $GeneList
+
 echo "Querying the database..."
-gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, impact, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < $max_aaf" --header $GeminiToSearch > $OutputDir/Master_Variants_List.txt
+gemini query -q "select chrom, start, end, gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < $max_aaf" --header $GeminiToSearch > $OutputDir/Master_Variants_List.txt
 
 file_stripper(){
 #Strips out samples where the variants were not seen to make it more readable.
@@ -40,12 +42,28 @@ NR!=FNR {
 #Cut 1st line from $OutputDir/Master_Variants_List.txt to get headers
 awk 'NR == 1' $OutputDir/Master_Variants_List.txt >>$OutputDir/Filtered_genes.txt
 
+old_method(){
 while IFS="" read -r gene_name || [ -n "$gene_name" ]
 do
 echo "$gene_name"
-#Cross reference gene list and export to FEVR_genes.txt
-#grep "/bin/bash" /etc/passwd | cut -d'|' -s -f1
 grep -Fwf $GeneList $OutputDir/Master_Variants_List.txt >> $OutputDir/Filtered_genes.txt 
 done < $GeneList
 echo "All files from this export can be found in $OutputDir"
+#file_stripper
+}
+
+new_method(){
+#Sort Master_Variants_List.txt
+sort -k 4 $OutputDir/Master_Variants_List.txt > $OutputDir/Sorted_Master_Variants_List.txt
+
+#grep source.file reference.file
+echo "$gene_name"
+grep -Fwf $GeneList $OutputDir/Master_Variants_List.txt >> $OutputDir/Filtered_genes.txt 
+echo "All files from this export can be found in $OutputDir"
+
+#grep -f <( sed 's/.*/ &$/' /mnt/d/GENE_LIST.txt) $OutputDir/Sorted_Master_Variants_List.txt >> $OutputDir/new.txt
+#grep -w $line /mnt/d/GENE_LIST.txt $OutputDir/Sorted_Master_Variants_List.txt  >> $OutputDir/new.txt
+}
+
+new_method
 file_stripper

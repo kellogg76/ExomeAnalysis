@@ -12,7 +12,7 @@ echo "***************"
 gene_name=$1
 
 #Output Directory
-OutputDir=/mnt/d/GeneSearcher
+OutputDir=/mnt/d/Gene_Searcher
 mkdir $OutputDir
 
 #Gemini Database File

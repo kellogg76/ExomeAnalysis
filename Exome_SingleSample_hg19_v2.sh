@@ -3,67 +3,80 @@
 #Command to run this script is ./Exome_ThreeSamples_hg19_v2.sh sample1
 #eg ./Exome_ThreeSamples_hg19_v2.sh 549
 
+<<to_add
+Add ability to call coding_coverage.sh and then Coverage_plot.R script
+See if removal of  Realigner Target Creator & Indel Realigner affects outcome, gatk says they can be removed if using HaplotypeCaller -CAN BE DONE BUT IS NO FASTER.
+See if removal of  --variant_index_parameter & --variant_index_type can be removed as per GATK
+Add report exports to functions so they write as pipeline progresses and reduces the number of lines of code?
+to_add
+
 echo "***************"
 echo "Mats Exome Pipeline"
 echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR101
+RunCode=FEVR50
 
 #Enter sample name below
 sample1=$1
 
 ###Paths to files###
 #Linux Paths
-buildpath=/mnt/d/hg19
-toolpath=~
-runpath=/mnt/d/$RunCode
-temppath=$runpath/temp
-mkdir -p $temppath
+hg19_buildpath=/mnt/d/hg19
+ToolPath=~
+DataPath=/mnt/d/$RunCode
+TempPath=$DataPath/temp
+mkdir -p $TempPath
 
 ############
 #Tool Paths#
 ############
 #Picard Path
-PICARD=$toolpath/picard.jar
+PICARD=$ToolPath/picard.jar
 #SNPEff Path
-SNPEff=$toolpath/snpEff/snpEff.jar
+SNPEff=$ToolPath/snpEff/snpEff.jar
 #GATK Path
-GATK=$toolpath/GenomeAnalysisTK.jar
+GATK=$ToolPath/GenomeAnalysisTK.jar
 
 #############
 #Build Paths#
 #############
 #dbSNP Path
-dbSNP=$buildpath/dbsnp_138.b37.vcf
+dbSNP=$hg19_buildpath/dbsnp_138.b37.vcf
 #Fasta Path
-FASTA=$buildpath/human_g1k_v37.fasta
+FASTA=$hg19_buildpath/human_g1k_v37.fasta
 #CCDS Path
-CCDS=$buildpath/ccds_hg19.bed
+CCDS=$hg19_buildpath/ccds_hg19.bed
 #Indels Path
-INDELS=$buildpath/Mills_and_1000G_gold_standard.indels.b37.vcf
+INDELS=$hg19_buildpath/Mills_and_1000G_gold_standard.indels.b37.vcf
 #1000 Genomes Indels
-G1000=$buildpath/1000G_phase1.indels.b37.vcf
+G1000=$hg19_buildpath/1000G_phase1.indels.b37.vcf
 
 # timestamp function
 timestamp() {
 date +"%Y-%m-%d %H:%M:%S"
 }
 
-catenation(){
+# move files from sub folders
+move_fastq() {
+timestamp
+find $DataPath -type f -print0 | xargs -0 mv -t $DataPath
+}
+
+Catenation(){
 #Catenation
 echo "Catenating: " $sample1
-cat $runpath/$sample1\_S2_L001_R1_001.fastq.gz $runpath/$sample1\_S2_L002_R1_001.fastq.gz $runpath/$sample1\_S2_L003_R1_001.fastq.gz $runpath/$sample1\_S2_L004_R1_001.fastq.gz > $runpath/$sample1-R1.fastq.gz
-cat $runpath/$sample1\_S2_L001_R2_001.fastq.gz $runpath/$sample1\_S2_L002_R2_001.fastq.gz $runpath/$sample1\_S2_L003_R2_001.fastq.gz $runpath/$sample1\_S2_L004_R2_001.fastq.gz > $runpath/$sample1-R2.fastq.gz
+cat $DataPath/$sample1\_S2_L001_R1_001.fastq.gz $DataPath/$sample1\_S2_L002_R1_001.fastq.gz $DataPath/$sample1\_S2_L003_R1_001.fastq.gz $DataPath/$sample1\_S2_L004_R1_001.fastq.gz > $DataPath/$sample1-R1.fastq.gz
+cat $DataPath/$sample1\_S2_L001_R2_001.fastq.gz $DataPath/$sample1\_S2_L002_R2_001.fastq.gz $DataPath/$sample1\_S2_L003_R2_001.fastq.gz $DataPath/$sample1\_S2_L004_R2_001.fastq.gz > $DataPath/$sample1-R2.fastq.gz
 
 #Add code to delete the uncatenated files
 echo "Deleting uncatenated files for: " $sample1
-rm $runpath/$sample1\_S1_L001_R1_001.fastq.gz $runpath/$sample1\_S1_L002_R1_001.fastq.gz $runpath/$sample1\_S1_L003_R1_001.fastq.gz $runpath/$sample1\_S1_L004_R1_001.fastq.gz
-rm $runpath/$sample1\_S1_L001_R2_001.fastq.gz $runpath/$sample1\_S1_L002_R2_001.fastq.gz $runpath/$sample1\_S1_L003_R2_001.fastq.gz $runpath/$sample1\_S1_L004_R2_001.fastq.gz
+rm $DataPath/$sample1\_S1_L001_R1_001.fastq.gz $DataPath/$sample1\_S1_L002_R1_001.fastq.gz $DataPath/$sample1\_S1_L003_R1_001.fastq.gz $DataPath/$sample1\_S1_L004_R1_001.fastq.gz
+rm $DataPath/$sample1\_S1_L001_R2_001.fastq.gz $DataPath/$sample1\_S1_L002_R2_001.fastq.gz $DataPath/$sample1\_S1_L003_R2_001.fastq.gz $DataPath/$sample1\_S1_L004_R2_001.fastq.gz
 }
 
-bwa_step(){
+BWA_Step(){
 #BWA
 echo "*******************************"
 echo "*Processing Samples $sample1*"
@@ -73,87 +86,87 @@ echo "******BWA******"
 echo "***************"
 timestamp
 echo "Recalibrating sample: " $sample1
-bwa mem -t 7 -M -v 2 $FASTA $runpath/$sample1-R1.fastq.gz $runpath/$sample1-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $runpath/$sample1.bwa.sorted.bam -T $temppath/$sample1.bwa.sort.temp
+bwa mem -t 7 -M -v 2 $FASTA $DataPath/$sample1-R1.fastq.gz $DataPath/$sample1-R2.fastq.gz | samtools view -u - | samtools sort -@ 7 -O bam -o $DataPath/$sample1.bwa.sorted.bam -T $TempPath/$sample1.bwa.sort.temp
 }
 
-read_groups(){
+Read_Groups(){
 #Add Or Replace Read Groups
 echo "************************"
 echo "*AddOrReplaceReadGroups*"
 timestamp
 echo "************************"
 echo "AddOrReplaceReadGroups sample: " $sample1
-java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$runpath/$sample1.bwa.sorted.bam OUTPUT=$runpath/$sample1.rg.sorted.bam RGID=$sample1 RGSM=$sample1 RGLB=$sample1 RGPL=illumina RGPU=miseq
+java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample1.bwa.sorted.bam OUTPUT=$DataPath/$sample1.rg.sorted.bam RGID=$sample1 RGSM=$sample1 RGLB=$sample1 RGPL=illumina RGPU=miseq
 
 }
 
-build_bam_index(){
+Build_Bam_Index(){
 #Build BAM Index
 echo "*******************"
 echo "***BuildBamIndex***"
 echo "*******************"
 timestamp
 echo "BuildBamIndex sample: " $sample1
-java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$runpath/$sample1.rg.sorted.bam
+java -Xmx24g -jar $PICARD BuildBamIndex INPUT=$DataPath/$sample1.rg.sorted.bam
 }
 
-mark_duplicates(){
+Mark_Duplicates(){
 #Mark Duplicates
 echo "*********************"
 echo "***Mark Duplicates***"
 echo "*********************"
 timestamp
 echo "MarkDuplicates sample: " $sample1
-java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$runpath/$sample1.dedup.metrics INPUT=$runpath/$sample1.rg.sorted.bam OUTPUT=$runpath/$sample1.dedup.sorted.bam
+java -Xmx24g -jar $PICARD MarkDuplicates CREATE_INDEX=true METRICS_FILE=$DataPath/$sample1.dedup.metrics INPUT=$DataPath/$sample1.rg.sorted.bam OUTPUT=$DataPath/$sample1.dedup.sorted.bam
 }
 
-realigner1(){
+Realigner1(){
 #Realigner Target Creator
 echo "****************************"
 echo "***RealignerTargetCreator***"
 echo "****************************"
 timestamp
 echo "RealignerTargetCreator sample: " $sample1
-java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $runpath/$sample1.dedup.sorted.bam -o $runpath/$sample1.targets.intervals -known $INDELS -known $G1000 -nt 7
+java -Xmx24g -jar $GATK -T RealignerTargetCreator -R $FASTA -I $DataPath/$sample1.dedup.sorted.bam -o $DataPath/$sample1.targets.intervals -known $INDELS -known $G1000 -nt 7
 }
 
-realigner2(){
+Realigner2(){
 #Indel Realigner
 echo "********************"
 echo "***IndelRealigner***"
 echo "********************"
 timestamp
 echo "IndelRealigner sample: " $sample1
-java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $runpath/$sample1.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $runpath/$sample1.targets.intervals --read_filter NotPrimaryAlignment -o $runpath/$sample1.realigned.sorted.bam
+java -Xmx24g -jar $GATK -T IndelRealigner -R $FASTA -I $DataPath/$sample1.dedup.sorted.bam -known $G1000 -known $INDELS -targetIntervals $DataPath/$sample1.targets.intervals --read_filter NotPrimaryAlignment -o $DataPath/$sample1.realigned.sorted.bam
 }
 
-recalibration(){
+Recalibration(){
 #Recalibration
 echo "***************"
 echo "Recalibration"
 echo "***************"
 timestamp
 echo "Recalibrating sample: " $sample1
-java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $runpath/$sample1.realigned.sorted.bam -o $runpath/$sample1.recal --knownSites $dbSNP -nct 7
-java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $runpath/$sample1.realigned.sorted.bam -o $runpath/$sample1.recalibrated.sorted.bam -BQSR $runpath/$sample1.recal -nct 7
+java -Xmx8g -jar $GATK -T BaseRecalibrator -R $FASTA -I $DataPath/$sample1.realigned.sorted.bam -o $DataPath/$sample1.recal --knownSites $dbSNP -nct 7
+java -Xmx8g -jar $GATK -T PrintReads -R $FASTA -I $DataPath/$sample1.realigned.sorted.bam -o $DataPath/$sample1.recalibrated.sorted.bam -BQSR $DataPath/$sample1.recal -nct 7
 }
 
-variant_calling(){
+Variant_Calling(){
 #Variant Calling & Annotations
 echo "***************"
 echo "Variant Calling & Annotations"
 echo "***************"
 timestamp
 echo "Haplotype calling sample: " $sample1
-java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $runpath/$sample1.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $runpath/$sample1.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample1.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample1.haplotypecaller.g.vcf -nct 7
 echo "Generating gVCF"
-java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $runpath/$sample1.haplotypecaller.g.vcf -o $runpath/$RunCode.haplotypecaller.vcf
+java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $DataPath/$sample1.haplotypecaller.g.vcf -o $DataPath/$RunCode.haplotypecaller.vcf
 echo "zless, sed etc"
-zless $runpath/$RunCode.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r $FASTA - > $runpath/$RunCode.hc.normalized.vcf
+zless $DataPath/$RunCode.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r $FASTA - > $DataPath/$RunCode.hc.normalized.vcf
 echo "Variant annotator"
-java -Xmx24g -jar $GATK -T VariantAnnotator -R $FASTA -nt 7 --group StandardAnnotation --dbsnp $dbSNP -I $runpath/$sample1.recalibrated.sorted.bam --variant $runpath/$RunCode.hc.normalized.vcf -L $runpath/$RunCode.hc.normalized.vcf -o $runpath/$RunCode.annotated.vcf
+java -Xmx24g -jar $GATK -T VariantAnnotator -R $FASTA -nt 7 --group StandardAnnotation --dbsnp $dbSNP -I $DataPath/$sample1.recalibrated.sorted.bam --variant $DataPath/$RunCode.hc.normalized.vcf -L $DataPath/$RunCode.hc.normalized.vcf -o $DataPath/$RunCode.annotated.vcf
 echo "Filering variants"
-java -Xmx24g -jar $GATK -T VariantFiltration -R $FASTA --filterExpression "MQ0 > 50.0" --filterName "HighMQ0" --filterExpression "DP < 10.0" --filterName "LowDepth" --filterExpression "QUAL < 10.0" --filterName "LowQual" --filterExpression "MQ < 10.0" --filterName "LowMappingQual" --variant $runpath/$RunCode.annotated.vcf -o $runpath/$RunCode.filtered.vcf
+java -Xmx24g -jar $GATK -T VariantFiltration -R $FASTA --filterExpression "MQ0 > 50.0" --filterName "HighMQ0" --filterExpression "DP < 10.0" --filterName "LowDepth" --filterExpression "QUAL < 10.0" --filterName "LowQual" --filterExpression "MQ < 10.0" --filterName "LowMappingQual" --variant $DataPath/$RunCode.annotated.vcf -o $DataPath/$RunCode.filtered.vcf
 echo "...complete."
 }
 
@@ -163,13 +176,13 @@ echo "***************"
 echo "SNPEff"
 echo "***************"
 timestamp
-java -Xmx40g -jar $SNPEff GRCh37.75 $runpath/$RunCode.filtered.vcf > $runpath/$RunCode.snpEff.vcf
-mv snpEff_genes.txt $runpath/$RunCode.snpEff_genes.txt
-mv snpEff_summary.html $runpath/$RunCode.snpEff_summary.html
+java -Xmx40g -jar $SNPEff GRCh37.75 $DataPath/$RunCode.filtered.vcf > $DataPath/$RunCode.snpEff.vcf
+mv snpEff_genes.txt $DataPath/$RunCode.snpEff_genes.txt
+mv snpEff_summary.html $DataPath/$RunCode.snpEff_summary.html
 echo "...complete."
 }
 
-Gemini_update(){
+Gemini_Update(){
  #Gemini
  echo "***************"
  echo "Gemini updater"
@@ -185,11 +198,11 @@ echo "***************"
 echo "Gemini database creation"
 echo "***************"
 timestamp
-gemini load -v $runpath/$RunCode.snpEff.vcf -t snpEff --cores 8 $runpath/$RunCode.gemini.db
+gemini load -v $DataPath/$RunCode.snpEff.vcf -t snpEff --cores 8 $DataPath/$RunCode.gemini.db
 echo "...complete."
 }
 
-Gemini_export(){
+Gemini_Export(){
  #Output Gemini Files
 echo "***************"
 echo "Outputting Gemini files..."
@@ -197,27 +210,27 @@ echo "***************"
 timestamp
 #Short Export
 #Heterozygous
-gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $runpath/$RunCode.het_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $DataPath/$RunCode.gemini.db > $DataPath/$RunCode.het_med_high_rare.txt
 
 #Non Homozygous
-gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score,  aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $runpath/$RunCode.non_hom_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score,  aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $DataPath/$RunCode.gemini.db > $DataPath/$RunCode.non_hom_med_high_rare.txt
 
 #Homozygous
-gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score,  aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.gemini.db > $runpath/$RunCode.hom_alt_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score,  aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $DataPath/$RunCode.gemini.db > $DataPath/$RunCode.hom_alt_med_high_rare.txt
 echo "...complete."
 }
 
-coverage(){
+Coverage(){
  echo "***************"
  echo "Calculating exome coverage"
  echo "***************"
 timestamp
 echo "Calculating coverage:  " $sample1
 #Perform calculation & export
-java -Xmx24g -jar picard.jar CollectHsMetrics I=$runpath/$sample1.recalibrated.sorted.bam O=$runpath/$sample1.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list TARGET_INTERVALS=$buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list
+java -Xmx24g -jar picard.jar CollectHsMetrics I=$DataPath/$sample1.recalibrated.sorted.bam O=$DataPath/$sample1.collect_hs_metrics.txt R=$FASTA BAIT_INTERVALS=$hg19_buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list TARGET_INTERVALS=$hg19_buildpath/TruSeq_exome_targeted_regions.hg19.list.interval_list
 }
 
-vep(){
+VEP(){
  #VEP###Doesn't work yet, needs hg38?
  echo "***************"
  echo "Variant Effect Predictor"
@@ -236,103 +249,169 @@ perl variant_effect_predictor.pl -i example.vcf \
     --fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE
 }
 
-specific_coverage(){
+Exomiser(){
+#Data location https://data.monarchinitiative.org/exomiser/data/
+
+java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample1.yml
+}
+
+Manta(){
+#Run Manta Structural Variant Caller v1.6.0 for 
+~/manta1.6.0/bin/configManta.py --bam $DataPath/$sample1.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $DataPath/manta --exome
+python $DataPath/manta/runWorkflow.py
+}
+
+Specific_Coverage(){
 #The coverage of a specific region as defined by the PI
 #Count the total and averaged coverage 
 samtools mpileup -r 'chr1:1,958,700-1,958,907' $sample1.recalibrated.sorted.bam | awk 'BEGIN{C=0}; {C=C+$4}; END{print C "\t" C/NR}'
 }
 
-exomiser(){
-java -Xms2g -Xmx4g -jar ~/exomiser-cli-11.0.0/exomiser-cli-11.0.0.jar --analysis /mnt/d/$RunCode/$sample1.yml
+Merge_FEVR_Files(){ 
+#Rename  previous combined files for posterity
+echo "Backing up master files..."
+cp $hg19_BuildPath/FEVR.combined.vcf.gz $hg19_BuildPath/FEVR.combined_`date +"%Y-%m-%d"`.vcf.gz
+cp $hg19_BuildPath/FEVR.combined.gemini.db $hg19_BuildPath/FEVR.combined.gemini_`date +"%Y-%m-%d"`.db
+
+#Merge VCF’s (VCF must be zipped)
+echo "Zipping snpEff VCF file"
+bgzip $DataPath/$RunCode.snpEff.vcf
+echo "Indexing..."
+bcftools index $DataPath/$RunCode.snpEff.vcf.gz
+bcftools index $hg19_BuildPath/FEVR.combined.vcf.gz
+echo "Merging..."
+bcftools merge -m id $DataPath/$RunCode.snpEff.vcf.gz $hg19_BuildPath/FEVR.combined.vcf.gz > $hg19_BuildPath/FEVR.combined.vcf.gz
+
+#Convert merged VCF into Gemini DB
+echo "Converting VCF to Gemini db..."
+gemini load -v $hg19_BuildPath/FEVR.combined.vcf.gz -t snpEff --cores 8 $hg19_BuildPath/FEVR.combined.gemini.db
+} 
+
+Files_To_Backup(){
+#Copy files to backup into a new folder to make life easier
+mkdir /mnt/d/$RunCode/To_Backup/
+
+#FASTQ
+cp /mnt/d/$RunCode/*.fastq.gz /mnt/d/$RunCode/To_Backup/
+
+#VCF's
+cp /mnt/d/$RunCode/$RunCode.snpEff.vcf /mnt/d/$RunCode/To_Backup/
+cp /mnt/d/$RunCode/$RunCode.snpEff.vcf.gz /mnt/d/$RunCode/To_Backup/
+cp /mnt/d/$RunCode/$RunCode.snpEff.vcf.gz.gbi /mnt/d/$RunCode/To_Backup/
+
+#Bam's
+cp /mnt/d/$RunCode/*.recalibrated.sorted.bam /mnt/d/$RunCode/To_Backup/
+cp /mnt/d/$RunCode/*recalibrated.sorted.bai /mnt/d/$RunCode/To_Backup/
+
+#Text files
+cp /mnt/d/$RunCode/$RunCode.hom_alt_med_high_rare.txt /mnt/d/$RunCode/To_Backup/
+cp /mnt/d/$RunCode/$RunCode.non_hom_med_high_rare.txt /mnt/d/$RunCode/To_Backup/
+cp /mnt/d/$RunCode/$RunCode.het_med_high_rare.txt /mnt/d/$RunCode/To_Backup/
+
+#Gemini_DB
+cp /mnt/d/$RunCode/*.db /mnt/d/$RunCode/To_Backup/
 }
 
-manta(){
-#Run Manta Structural Variant Caller v1.6.0 for 
-~/manta1.6.0/bin/configManta.py --bam $runpath/$sample1.recalibrated.sorted.bam --referenceFasta $FASTA --runDir $runpath/manta --exome
-python $runpath/manta/runWorkflow.py
-}
-
-merge_FEVR(){
-#Merge VCF's into large FEVR database
-bgzip $runpath/$RunCode.snpEff.vcf > $runpath/$RunCode.snpEff.vcf.gz
-bcftools index $runpath/$RunCode.snpEff.vcf.gz
-bcftools merge -m id $runpath/$RunCode.snpEff.vcf.gz > $buildpath/FEVR.combined.vcf
-}
-
-FEVR_export(){
+FEVR_Email_Export(){
  #Output FEVR Email Files
 echo "***************"
 echo "Outputting FEVR files..."
 echo "***************"
 timestamp
-
-#gene, codon_change, aa_change, rs_ids, max_aaf_all freq, gerp_bp_score
+dos2unix $GeneList
 
 #Heterozygous
 #Sample 1
-gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hets.txt
-#Now extract only genes in /mnt/d/FEVR_gene_list.txt
-grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hets.txt >> $temppath/FEVR1_email_hets.txt
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HET " $DataPath/$RunCode.gemini.db > $TempPath/$RunCode.FEVR1_all_hets.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $TempPath/$RunCode.FEVR1_all_hets.txt >> $TempPath/FEVR1_email_hets.txt
 
 #Non Homozygous
 #Sample1
-gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_non_homs.txt
-#Now extract only genes in /mnt/d/FEVR_gene_list.txt
-grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_non_homs.txt >> $temppath/FEVR1_email_non_homs.txt
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 != HOM_REF" $DataPath/$RunCode.gemini.db > $TempPath/$RunCode.FEVR1_all_non_homs.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $TempPath/$RunCode.FEVR1_all_non_homs.txt >> $TempPath/FEVR1_email_non_homs.txt
 
 #Homozygous Alt
 #Sample1
-gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $runpath/$RunCode.gemini.db > $temppath/$RunCode.FEVR1_all_hom_alt.txt
-#Now extract only genes in /mnt/d/FEVR_gene_list.txt
-grep -w -f  /mnt/d/FEVR_gene_list.txt $temppath/$RunCode.FEVR1_all_hom_alt.txt >> $temppath/FEVR1_email_hom_alt.txt
+gemini query -q "select  gene, codon_change, aa_change, rs_ids, max_aaf_all, aaf_exac_all, gerp_bp_score, gts.$sample1 from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.$sample1 == HOM_ALT" $DataPath/$RunCode.gemini.db > $TempPath/$RunCode.FEVR1_all_hom_alt.txt
+#Now extract only genes in $GeneList
+grep -w -f  $GeneList $TempPath/$RunCode.FEVR1_all_hom_alt.txt >> $TempPath/FEVR1_email_hom_alt.txt
 
 #Merging Files
-cat $temppath/FEVR1_email_hets.txt $temppath/FEVR1_email_non_homs.txt $temppath/FEVR1_email_hom_alt.txt > $temppath/FEVRSample1_EMAIL.txt
+cat $TempPath/FEVR1_email_hets.txt $TempPath/FEVR1_email_non_homs.txt $TempPath/FEVR1_email_hom_alt.txt > $TempPath/$1_EMAIL.txt
 #Delete duplicate lines
-cat $temppath/FEVRSample1_EMAIL.txt | sort | uniq > $runpath/FEVRSample1_EMAIL.txt
+cat $TempPath/$1_EMAIL.txt | sort | uniq > $DataPath/$1_EMAIL.txt
 #Write Header
-echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $runpath/FEVRSample1_EMAIL.txt > temp && mv temp $runpath/FEVRSample1_EMAIL.txt
+echo 'Gene	Codon Change	AA Change	rsID	Max Allele Freq.	ExAc Freq.	Gerp Scores	Genotype' | cat - $DataPath/$1_EMAIL.txt > temp && mv temp $DataPath/$1_EMAIL.txt
+
 echo "...complete."
+}
+
+Exome_Coverage_PDF(){
+#Run script to generate coverage plots
+dos2unix /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/complete_coverage.sh
+source /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/complete_coverage.sh $sample1
+}
+
+test_func(){
+#Run script to generate FEVR Gene coverage plots
+
+#First run coding_coverage.sh
+#dos2unix /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/coding_coverage.sh
+#source /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/coding_coverage.sh $sample1
+
+dos2unix /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/Coverage_plot.R
+source /mnt/c/Users/Bedard_Lab/Documents/GitHub/ExomeAnalysis/Coverage_plot.R $sample1
+
 }
 
 ##########################
 ###Select which functions to run###
 ##########################
 timestamp
-#catenation
-#bwa_step
-#read_groups
-#build_bam_index
-#mark_duplicates
-#realigner1
-#realigner2
-#recalibration
-#variant_calling
-#SNPEff
-#Gemini_update
-#Gemini_db
-#Gemini_export
-######coverage               ###Not working yet for hg19
-######vep              ###Not working yet
-#specific_coverage
-#manta
-#merge_FEVR
-#FEVR_export
+#move_fastq
+#Catenation
+#BWA_Step
+#Read_Groups
+#Build_Bam_Index
+#Mark_Duplicates
+#Realigner1
+#Realigner2
+#Recalibration
+Variant_Calling
+SNPEff
+Gemini_Update
+Gemini_db
+Gemini_Export
+#####################Coverage #Not working yet for hg19
+#####################VEP            #Not working yet
+#######Exomiser                    #Rarely used
+#######Manta                           #Rarely used
+#######Specific_Coverage  #Rarely used
+#Merge_FEVR_Files
+#FEVR_Export
+#Files_To_Backup
+#FEVR_Email_Export
+#Exome_Coverage_PDF
+#test_func
 
 #Generate Report Files
+Report_Start(){
 echo "***************"
 echo "Outputting Report files..."
 echo "***************"
 timestamp
+}
  
-report_header(){
+Report_Header(){
  #Export nohup.out to text file
  printf "%b\n" "The following report was generated by Mat Nightingale at the Dalhousie Genomics Core, all analysis was done using Human Genome hg19." \
  "If anything is unclear contact Genomics@Dal.ca" \
- "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" \ > $temppath/Pipeline_Commands.txt
+ "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" \ > $TempPath/Pipeline_Commands.txt
 }
 
-report_subscript(){
+Report_Subscript(){
  printf "%b\n" "Files included with this report :-\n" \
 "FASTQ Files are the raw data" \
 "$sample1-R1.fastq.qz & $sample1-R2.fastq.qz\n" \
@@ -366,100 +445,100 @@ report_subscript(){
 "continuous coverage over all indel sizes when the small variant caller and manta outputs are evaluated together. Alternate small indel candidate sets can be parsed out of the candidateSV.vcf.gz file"\
 "if this candidate set is not appropriate.\n"\
 "If other exports are required please let me know.\n" \
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > $temppath/Report_Header.txt
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" > $TempPath/Report_Header.txt
 }
 
-variant_count(){
+Variant_Count(){
  #How many variants?
  printf   "%b"\
-"Total variants seen in this analysis after filtering out poor quality & low coverage reads :-\n" > $temppath/Variant_total.txt
-gemini query -q 'select count(*) from variants' --header $runpath/$RunCode.gemini.db >> $temppath/Variant_total.txt
+"Total variants seen in this analysis after filtering out poor quality & low coverage reads :-\n" > $TempPath/Variant_total.txt
+gemini query -q 'select count(*) from variants' --header $DataPath/$RunCode.gemini.db >> $TempPath/Variant_total.txt
 }
 
-snp_indel_count(){
+SNP_Indel_Count(){
 #How many SNPs and INDELs?
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"Total SNPs and INDELs seen in this analysis after filtering out poor quality & low coverage reads :-" > $temppath/SNP_Indel.txt
-gemini query -q 'select type,count(*) from variants group by type' --header $runpath/$RunCode.gemini.db >> $temppath/SNP_Indel.txt
+"Total SNPs and INDELs seen in this analysis after filtering out poor quality & low coverage reads :-" > $TempPath/SNP_Indel.txt
+gemini query -q 'select type,count(*) from variants group by type' --header $DataPath/$RunCode.gemini.db >> $TempPath/SNP_Indel.txt
 }
 
-severity(){
+Severity(){
 #The impact severity of the variants
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"Severity of the variants seen in this analysis :-" > $temppath/Severity.txt
-gemini query -q 'select impact_severity,count(*) from variants group by impact_severity' --header $runpath/$RunCode.gemini.db >> $temppath/Severity.txt
+"Severity of the variants seen in this analysis :-" > $TempPath/Severity.txt
+gemini query -q 'select impact_severity,count(*) from variants group by impact_severity' --header $DataPath/$RunCode.gemini.db >> $TempPath/Severity.txt
 }
 
-clinvar_variants(){
+Clinvar_Variants(){
 #How many variants are in ClinVar and what are their annotations
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"How many variants are in ClinVar and what are their annotations :-" > $temppath/ClinVar.txt
-gemini query -q 'select clinvar_sig,count(*) from variants group by clinvar_sig' --header $runpath/$RunCode.gemini.db >> $temppath/ClinVar.txt
+"How many variants are in ClinVar and what are their annotations :-" > $TempPath/ClinVar.txt
+gemini query -q 'select clinvar_sig,count(*) from variants group by clinvar_sig' --header $DataPath/$RunCode.gemini.db >> $TempPath/ClinVar.txt
 }
 
-clinvar_pathogenic(){
+Clinvar_Pathogenic(){
 #Find variants that are listed as pathogenic in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"Pathogenic ClinVar entries seen in this data :-" > $temppath/PathogenicClinVar.txt
-gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $runpath/$RunCode.gemini.db >> $temppath/PathogenicClinVar.txt
+"Pathogenic ClinVar entries seen in this data :-" > $TempPath/PathogenicClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_sig like "%pathogenic%"' --header $DataPath/$RunCode.gemini.db >> $TempPath/PathogenicClinVar.txt
 }
 
-clinvar_keyword(){
+Clinvar_Keyword(){
 #Find variants that are listed  with a keyword in ClinVar
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"ClinVar entries matching the keyword 'Retinopathy' seen in this data after filtering out poor quality & low coverage reads :-" > $temppath/KeywordClinVar.txt
-gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $runpath/$RunCode.gemini.db >> $temppath/KeywordClinVar.txt
+"ClinVar entries matching the keyword 'Retinopathy' seen in this data after filtering out poor quality & low coverage reads :-" > $TempPath/KeywordClinVar.txt
+gemini query -q 'select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, clinvar_disease_name from variants where clinvar_disease_name like "%Retinopathy%"' --header $DataPath/$RunCode.gemini.db >> $TempPath/KeywordClinVar.txt
 }
 
-gemini_results(){
+Gemini_Results(){
 #How many variants are left after filtering in Gemini
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"How many rare (<1% max. alt. allele frequency) variants remain after filtering for heterozygous variants that have a medium or high impact severity :-" > $temppath/gemini_results_count.txt
-wc -l $runpath/$RunCode.het_med_high_rare.txt | awk '{ print $1 -1}' >> $temppath/gemini_results_count.txt
+"How many rare (<1% max. alt. allele frequency) variants remain after filtering for heterozygous variants that have a medium or high impact severity :-" > $TempPath/Gemini_Results_count.txt
+wc -l $DataPath/$RunCode.het_med_high_rare.txt | awk '{ print $1 -1}' >> $TempPath/Gemini_Results_count.txt
 
-printf  "%b\n" "How many rare (<1% max. alt. allele frequency) variants remain after filtering for non homozygous variants that have a medium or high impact severity :-" >> $temppath/gemini_results_count.txt
-wc -l $runpath/$RunCode.non_hom_med_high_rare.txt | awk '{ print $1 -1}' >> $temppath/gemini_results_count.txt
+printf  "%b\n" "How many rare (<1% max. alt. allele frequency) variants remain after filtering for non homozygous variants that have a medium or high impact severity :-" >> $TempPath/Gemini_Results_count.txt
+wc -l $DataPath/$RunCode.non_hom_med_high_rare.txt | awk '{ print $1 -1}' >> $TempPath/Gemini_Results_count.txt
 
-printf  "%b\n" "How many rare (<1% max. alt. allele frequency) variants remain after filtering for homozygous alternate allele variants that have a medium or high impact severity :-" >> $temppath/gemini_results_count.txt
-wc -l $runpath/$RunCode.hom_alt_med_high_rare.txt | awk '{ print $1 -1}' >> $temppath/gemini_results_count.txt
+printf  "%b\n" "How many rare (<1% max. alt. allele frequency) variants remain after filtering for homozygous alternate allele variants that have a medium or high impact severity :-" >> $TempPath/Gemini_Results_count.txt
+wc -l $DataPath/$RunCode.hom_alt_med_high_rare.txt | awk '{ print $1 -1}' >> $TempPath/Gemini_Results_count.txt
 }
 
-exomiser(){
+Exomiser_Text(){
 #Exomiser data goes here
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
-"See the separate output files for the Exomiser gene prioritization data." > $temppath/exomiser.txt
+"See the separate output files for the Exomiser gene prioritization data." > $TempPath/exomiser.txt
 }
 
-key_genes(){
+Key_Genes(){
 #Search for key genes
-key_genes=$(<$runpath/gene_list.txt)
+Key_Genes=$(<$DataPath/gene_list.txt)
 
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Genes associated with this project are :-\n"\
-"$key_genes\n\n"\
-"Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) heterozygous variants that have a medium or high impact severity :-" > $temppath/key_genes.txt
-grep -m1 "" $runpath/$RunCode.het_med_high_rare.txt >>$temppath/key_genes.txt
-ps -ef | egrep -wi "$key_genes" $runpath/$RunCode.het_med_high_rare.txt >> $temppath/key_genes.txt
+"$Key_Genes\n\n"\
+"Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) heterozygous variants that have a medium or high impact severity :-" > $TempPath/Key_Genes.txt
+grep -m1 "" $DataPath/$RunCode.het_med_high_rare.txt >>$TempPath/Key_Genes.txt
+ps -ef | egrep -wi "$Key_Genes" $DataPath/$RunCode.het_med_high_rare.txt >> $TempPath/Key_Genes.txt
 
-printf  "%b\n" >> $temppath/key_genes.txt
-printf  "%b\n" "Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) non homozygous variants that have a medium or high impact severity :-" >> $temppath/key_genes.txt
-grep -m1 "" $runpath/$RunCode.non_hom_med_high_rare.txt >>$temppath/key_genes.txt
-ps -ef | egrep -wi "$key_genes" $runpath/$RunCode.non_hom_med_high_rare.txt >>$temppath/key_genes.txt
+printf  "%b\n" >> $TempPath/Key_Genes.txt
+printf  "%b\n" "Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) non homozygous variants that have a medium or high impact severity :-" >> $TempPath/Key_Genes.txt
+grep -m1 "" $DataPath/$RunCode.non_hom_med_high_rare.txt >>$TempPath/Key_Genes.txt
+ps -ef | egrep -wi "$Key_Genes" $DataPath/$RunCode.non_hom_med_high_rare.txt >>$TempPath/Key_Genes.txt
 
-printf  "%b\n" >> $temppath/key_genes.txt
-printf  "%b\n" "Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) homozygous variants that have a medium or high impact severity :-" >> $temppath/key_genes.txt
-grep -m1 "" $runpath/$RunCode.non_hom_med_high_rare.txt >>$temppath/key_genes.txt
-ps -ef | egrep -wi "$key_genes" $runpath/$RunCode.hom_alt_med_high_rare.txt >> $temppath/key_genes.txt
+printf  "%b\n" >> $TempPath/Key_Genes.txt
+printf  "%b\n" "Which genes are in the final variants list after filtering for rare (<1% max. alt. allele frequency) homozygous variants that have a medium or high impact severity :-" >> $TempPath/Key_Genes.txt
+grep -m1 "" $DataPath/$RunCode.non_hom_med_high_rare.txt >>$TempPath/Key_Genes.txt
+ps -ef | egrep -wi "$Key_Genes" $DataPath/$RunCode.hom_alt_med_high_rare.txt >> $TempPath/Key_Genes.txt
 }
 
-exome_coverage(){
+Exome_Coverage(){
 #What was the exome coverage
 printf   "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Fraction of Bases covered at 1x, 2x, 10x, 20x, 30x, 50x, 100x, mean , median, max, zero  \n" \
-"Sample: $sample1 = \n"> $temppath/exome_coverage.txt
+"Sample: $sample1 = \n"> $TempPath/Exome_Coverage.txt
 }
 
-report_supplemental(){
+Report_Supplemental(){
  printf "%b\n" "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"\
 "Supplemental information \n" \
 "Methodology :-" \
@@ -473,15 +552,15 @@ report_supplemental(){
 "Illumina Nextera DNA Exome Kit is designed to capture exons annotated by the Consensus Coding Sequence (CCDS) coding regions, however not all exons are captured equally.\n"\
 "This can result in some regions which are under represented. Sequence variation in an individual may result in poor or biased allele-specific enrichment and sequence coverage \n"\
 "below the threshold resulting in failure to detect a mutation. "\
-"This capture kit does not target the mitochondrial genome." > $temppath/Report_Supplemental.txt
+"This capture kit does not target the mitochondrial genome." > $TempPath/Report_Supplemental.txt
 }
 
-prediction_scores(){
+Prediction_Scores(){
  #DOESN'T CURRENTLY WORK
  #What are the PolyPhen, SIFT, and CADD scores of any Retinopathy variants?-Maybe change this to get scores for only FEVR associated genes????
- gemini query -q 'select polyphen_score,sift_score,cadd_scaled from variants where clinvar_disease_name == "Retinopathy"' --header $runpath/$RunCode.gemini.db > $temppath/scores1.txt
- sed '1 i PolyPhen, SIFT, and CADD scores for any ClinVar results.' $temppath/scores1.txt > $temppath/scores2.txt
- sed '$ a\ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ' $temppath/scores2.txt > $temppath/Scores.txt
+ gemini query -q 'select polyphen_score,sift_score,cadd_scaled from variants where clinvar_disease_name == "Retinopathy"' --header $DataPath/$RunCode.gemini.db > $TempPath/scores1.txt
+ sed '1 i PolyPhen, SIFT, and CADD scores for any ClinVar results.' $TempPath/scores1.txt > $TempPath/scores2.txt
+ sed '$ a\ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ' $TempPath/scores2.txt > $TempPath/Scores.txt
 
  #How do these scores compare to the rest of the variants in the VCF file?
  gemini query -q 'select polyphen_score,sift_score,cadd_scaled from variants' --header ~/LinuxShare/$RunCode/$RunCode.db > $RunCode/report_scores.tsv
@@ -491,29 +570,30 @@ prediction_scores(){
  ###
 }
 
+Report_End(){
+#Merge text reports
+cat $TempPath/Pipeline_Commands.txt $TempPath/Report_Header.txt $TempPath/Variant_total.txt $TempPath/SNP_Indel.txt $TempPath/Severity.txt $TempPath/ClinVar.txt $TempPath/PathogenicClinVar.txt  $TempPath/KeywordClinVar.txt $TempPath/Gemini_Results_count.txt $TempPath/Key_Genes.txt $TempPath/Exome_Coverage.txt $TempPath/exomiser.txt $TempPath/Report_Supplemental.txt > $DataPath/$RunCode.Report.txt
+}
+
 #########################
 ###Select which reports to run###
 #########################
-report_header
-variant_count
-snp_indel_count
-severity
-clinvar_variants
-clinvar_pathogenic
-###################prediction_scores -DOESN'T CURRENTLY WORK
-clinvar_keyword
-gemini_results
-key_genes
-report_subscript
-report_supplemental
-
-#Merge text reports
-cat $temppath/Pipeline_Commands.txt $temppath/Report_Header.txt $temppath/Variant_total.txt $temppath/SNP_Indel.txt $temppath/Severity.txt $temppath/ClinVar.txt $temppath/PathogenicClinVar.txt  $temppath/KeywordClinVar.txt $temppath/gemini_results_count.txt $temppath/key_genes.txt $temppath/exome_coverage.txt $temppath/exomiser.txt $temppath/Report_Supplemental.txt > $runpath/$RunCode.Report.txt
+#Report_Start
+#Report_Header
+#Report_Subscript
+#Variant_Count
+#SNP_Indel_Count
+#Severity
+#Clinvar_Variants
+#Clinvar_Pathogenic
+#Clinvar_Keyword
+#Gemini_Results
+#Exomiser_Text
+#Key_Genes
+#Exome_Coverage
+#Report_Supplemental
+###################Prediction_Scores -DOESN'T CURRENTLY WORK
+#Report_End
 
 echo "Finished."
 timestamp
-
-#Things to add
-#See if removal of  Realigner Target Creator & Indel Realigner affects outcome, gatk says they can be removed if using HaplotypeCaller -CAN BE DONE BUT IS NO FASTER.
-#See if removal of  --variant_index_parameter & --variant_index_type can be removed as per GATK
-#Add report exports to functions so they write as pipeline progresses and reduces the number of lines of code?
