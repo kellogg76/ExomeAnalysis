@@ -14,7 +14,7 @@ echo "***************"
 sample1=$1
 
 #Paths to files
-DataPath=/mnt/f/Exome/FEVR03
+DataPath=/mnt/d/Exome_Coverage
 
 #Batch_Coverage Files
 BatchFiles=/mnt/d/Batch_Coverage
@@ -535,16 +535,139 @@ printf "Exon 26	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
 awk '$2>=10620146 && $2<=10620603     {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
 }
 
+#####Standard Genes#####
+
+KLF17(){
+gene=KLF17
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "1:44596184-44596428" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 3	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=44596184 && $2<=44596428 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
+HOXD4(){
+gene=HOXD4
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "2:177017336-177017670" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 2	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=177017336 && $2<=177017670 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
+METTL14(){
+gene=METTL14
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "4:119626766-119626976" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 10	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=119626766 && $2<=119626976 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
+CNBD1(){
+gene=CNBD1
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "8:87951824-87951982" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 4	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=87951824 && $2<=87951982 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
+MBD2(){
+gene=MBD2
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "18:51731368-51731527" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 2	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=51731368 && $2<=51731527 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
+URB1(){
+gene=URB1
+echo $gene
+#Cut bam
+echo "Extracting portion of bam file"
+samtools view -b $BamToSearch "21:33719265-33720120" > $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Index new bam
+echo "Indexing bam file"
+samtools index $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam
+#Count coverage
+echo "Counting coverage"
+samtools depth -Q 0 $BatchFiles/$sample1/${sample1}_${gene}_Exons.bam > $BatchFiles/$sample1/${sample1}_${gene}_Exons.txt
+
+#Calculate Max, Min and Mean coverage
+printf "Min	Max	Mean\n" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+printf "Exon 22	" >> $OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+awk '$2>=33719265 && $2<=33720120 {cnt++;sum += $3; min = ( (cnt == 1) || ($3 < min) ? $3 : min ); max = ( (cnt == 1) || ($3 > max) ? $3 : max )}END {print min+0, max+0, (cnt ? sum / cnt : 0)}' $BatchFiles/${sample1}/${sample1}_${gene}_Exons.txt >>$OutputDir/${sample1}_${gene}_Exon_Coverage.txt
+}
+
 #Genes to run
-NDP
-FZD4
-LRP5
-TSPAN12
+#NDP
+#FZD4
+#LRP5
+#TSPAN12
 #ZNF408
-KIF11
+#KIF11
 #CTNNB1
 #ATOH7
 #ILK
 #JAG1
+#Standard Genes
+KLF17
+HOXD4
+METTL14
+CNBD1
+MBD2
+URB1
 
 echo "All files from this export can be found in $OutputDir"

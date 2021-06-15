@@ -2,7 +2,7 @@
 #File that this code reads is from coding_coverage.sh
 
 #Set Sample Name
-samplename <- "F10-061"
+samplename <- "F10-052"
 
 #Set working directory
 setwd(paste0("D:/Batch_Coverage/",samplename))
@@ -291,4 +291,65 @@ plot(x = gene_name_df$V2, type = "l", y = gene_name_df$V3, las=2, xlab = "", yla
 plot(x = gene_name_df$V2, type = "l", y = gene_name_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(10621761,10621892), col = "#3366CC", main="JAG1 Exon 24")
 plot(x = gene_name_df$V2, type = "l", y = gene_name_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(10621431,10621581), col = "#3366CC", main="JAG1 Exon 25")
 plot(x = gene_name_df$V2, type = "l", y = gene_name_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(10620146,10620603), col = "#3366CC", main="JAG1 Exon 26")
+dev.off()
+
+
+
+
+#########
+#Standard Genes - KLF17
+#########
+#Gene name setup
+gene_name <- "Standards"
+gene_name1 <- "KLF17"
+gene_name2 <- "HOXD4"
+gene_name3 <- "METTL14"
+gene_name4 <- "CNBD1"
+gene_name5 <- "MBD2"
+gene_name6 <- "URB1"
+#File name setup
+file_name <- paste(samplename,gene_name, "coverage.pdf")
+
+#File1 to read
+gene_name1<-paste(samplename,"_",gene_name1, "_Exons.txt", sep="")
+#Create data frame1
+gene_name1_df <- read.csv2(gene_name1, sep = '\t', header = F)
+
+#File2 to read
+gene_name2<-paste(samplename,"_",gene_name2, "_Exons.txt", sep="")
+#Create data frame1
+gene_name2_df <- read.csv2(gene_name2, sep = '\t', header = F)
+
+#File3 to read
+gene_name3<-paste(samplename,"_",gene_name3, "_Exons.txt", sep="")
+#Create data frame3
+gene_name3_df <- read.csv2(gene_name3, sep = '\t', header = F)
+
+#File4 to read
+gene_name4<-paste(samplename,"_",gene_name4, "_Exons.txt", sep="")
+#Create data frame4
+gene_name4_df <- read.csv2(gene_name4, sep = '\t', header = F)
+
+#File5 to read
+gene_name5<-paste(samplename,"_",gene_name5, "_Exons.txt", sep="")
+#Create data frame5
+gene_name5_df <- read.csv2(gene_name5, sep = '\t', header = F)
+
+#File6 to read
+gene_name6<-paste(samplename,"_",gene_name6, "_Exons.txt", sep="")
+#Create data frame6
+gene_name6_df <- read.csv2(gene_name6, sep = '\t', header = F)
+
+
+#PDF setup as 4 rows, 2 columns
+pdf(file_name,width=10,height=16, title=gene_name)
+par(mfrow=c(4,2))
+par(mar = c(5,4,2,2))
+plot(x = gene_name1_df$V2, type = "l", y = gene_name1_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(44596184,44596428), col = "#3366CC", main= " KLF17 Exon 3")
+plot(x = gene_name2_df$V2, type = "l", y = gene_name2_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(177017336,177017670), col = "#3366CC", main="HOXD4 Exon 2")
+plot(x = gene_name3_df$V2, type = "l", y = gene_name3_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(119626766,119626976), col = "#3366CC", main="METLL14 Exon 10")
+plot(x = gene_name4_df$V2, type = "l", y = gene_name4_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(87951824,87951982), col = "#3366CC", main="CNBD1 Exon 4")
+plot(x = gene_name5_df$V2, type = "l", y = gene_name5_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(51731368,51731527), col = "#3366CC", main="MBD2 Exon 2")
+plot(x = gene_name6_df$V2, type = "l", y = gene_name6_df$V3, las=2, xlab = "", ylab= "Depth", ylim=c(0,100), xlim=c(33719265,33720120), col = "#3366CC", main="URB1 Exon 22")
+
 dev.off()
