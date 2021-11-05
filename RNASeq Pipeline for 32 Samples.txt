@@ -1,0 +1,46 @@
+Move files
+find /mnt/d/RNASeq002/ -type f -print0 | xargs -0 mv -t /mnt/d/RNASeq002/
+
+#####Pipeline for 32 RNASeq Samples#####
+cat 25_S1_L001_R1_001.fastq.gz 25_S1_L002_R1_001.fastq.gz 25_S1_L003_R1_001.fastq.gz 25_S1_L004_R1_001.fastq.gz > 25-R1.fastq.gz && cat 25_S1_L001_R2_001.fastq.gz 25_S1_L002_R2_001.fastq.gz 25_S1_L003_R2_001.fastq.gz 25_S1_L004_R2_001.fastq.gz > 25-R2.fastq.gz
+cat 26_S2_L001_R1_001.fastq.gz 26_S2_L002_R1_001.fastq.gz 26_S2_L003_R1_001.fastq.gz 26_S2_L004_R1_001.fastq.gz > 26-R1.fastq.gz && cat 26_S2_L001_R2_001.fastq.gz 26_S2_L002_R2_001.fastq.gz 26_S2_L003_R2_001.fastq.gz 26_S2_L004_R2_001.fastq.gz > 26-R2.fastq.gz
+cat 28_S3_L001_R1_001.fastq.gz 28_S3_L002_R1_001.fastq.gz 28_S3_L003_R1_001.fastq.gz 28_S3_L004_R1_001.fastq.gz > 28-R1.fastq.gz && cat 28_S3_L001_R2_001.fastq.gz 28_S3_L002_R2_001.fastq.gz 28_S3_L003_R2_001.fastq.gz 28_S3_L004_R2_001.fastq.gz > 28-R2.fastq.gz
+
+cat 29_S4_L001_R1_001.fastq.gz 29_S4_L002_R1_001.fastq.gz 29_S4_L003_R1_001.fastq.gz 29_S4_L004_R1_001.fastq.gz > 29-R1.fastq.gz && cat 29_S4_L001_R2_001.fastq.gz 29_S4_L002_R2_001.fastq.gz 29_S4_L003_R2_001.fastq.gz 29_S4_L004_R2_001.fastq.gz > 29-R2.fastq.gz
+cat 31_S5_L001_R1_001.fastq.gz 31_S5_L002_R1_001.fastq.gz 31_S5_L003_R1_001.fastq.gz 31_S5_L004_R1_001.fastq.gz > 31-R1.fastq.gz && cat 31_S5_L001_R2_001.fastq.gz 31_S5_L002_R2_001.fastq.gz 31_S5_L003_R2_001.fastq.gz 31_S5_L004_R2_001.fastq.gz > 31-R2.fastq.gz
+cat 32_S6_L001_R1_001.fastq.gz 32_S6_L002_R1_001.fastq.gz 32_S6_L003_R1_001.fastq.gz 32_S6_L004_R1_001.fastq.gz > 32-R1.fastq.gz && cat 32_S6_L001_R2_001.fastq.gz 32_S6_L002_R2_001.fastq.gz 32_S6_L003_R2_001.fastq.gz 32_S6_L004_R2_001.fastq.gz > 32-R2.fastq.gz
+
+cat 33_S7_L001_R1_001.fastq.gz 33_S7_L002_R1_001.fastq.gz 33_S7_L003_R1_001.fastq.gz 33_S7_L004_R1_001.fastq.gz > 33-R1.fastq.gz && cat 33_S7_L001_R2_001.fastq.gz 33_S7_L002_R2_001.fastq.gz 33_S7_L003_R2_001.fastq.gz 33_S7_L004_R2_001.fastq.gz > 33-R2.fastq.gz
+cat 34_S8_L001_R1_001.fastq.gz 34_S8_L002_R1_001.fastq.gz 34_S8_L003_R1_001.fastq.gz 34_S8_L004_R1_001.fastq.gz > 34-R1.fastq.gz && cat 34_S8_L001_R2_001.fastq.gz 34_S8_L002_R2_001.fastq.gz 34_S8_L003_R2_001.fastq.gz 34_S8_L004_R2_001.fastq.gz > 34-R2.fastq.gz
+cat 59_S9_L001_R1_001.fastq.gz 59_S9_L002_R1_001.fastq.gz 59_S9_L003_R1_001.fastq.gz 59_S9_L004_R1_001.fastq.gz > 59-R1.fastq.gz && cat 59_S9_L001_R2_001.fastq.gz 59_S9_L002_R2_001.fastq.gz 59_S9_L003_R2_001.fastq.gz 59_S9_L004_R2_001.fastq.gz > 59-R2.fastq.gz
+
+cat 60_S10_L001_R1_001.fastq.gz 60_S10_L002_R1_001.fastq.gz 60_S10_L003_R1_001.fastq.gz 60_S10_L004_R1_001.fastq.gz > 60-R1.fastq.gz && cat 60_S10_L001_R2_001.fastq.gz 60_S10_L002_R2_001.fastq.gz 60_S10_L003_R2_001.fastq.gz 60_S10_L004_R2_001.fastq.gz > 60-R2.fastq.gz
+cat 62_S11_L001_R1_001.fastq.gz 62_S11_L002_R1_001.fastq.gz 62_S11_L003_R1_001.fastq.gz 62_S11_L004_R1_001.fastq.gz > 62-R1.fastq.gz && cat 62_S11_L001_R2_001.fastq.gz 62_S11_L002_R2_001.fastq.gz 62_S11_L003_R2_001.fastq.gz 62_S11_L004_R2_001.fastq.gz > 62-R2.fastq.gz
+cat 63_S12_L001_R1_001.fastq.gz 63_S12_L002_R1_001.fastq.gz 63_S12_L003_R1_001.fastq.gz 63_S12_L004_R1_001.fastq.gz > 63-R1.fastq.gz && cat 63_S12_L001_R2_001.fastq.gz 63_S12_L002_R2_001.fastq.gz 63_S12_L003_R2_001.fastq.gz 63_S12_L004_R2_001.fastq.gz > 63-R2.fastq.gz
+
+cat 65_S13_L001_R1_001.fastq.gz 65_S13_L002_R1_001.fastq.gz 65_S13_L003_R1_001.fastq.gz 65_S13_L004_R1_001.fastq.gz > 65-R1.fastq.gz && cat 65_S13_L001_R2_001.fastq.gz 65_S13_L002_R2_001.fastq.gz 65_S13_L003_R2_001.fastq.gz 65_S13_L004_R2_001.fastq.gz > 65-R2.fastq.gz
+cat 66_S14_L001_R1_001.fastq.gz 66_S14_L002_R1_001.fastq.gz 66_S14_L003_R1_001.fastq.gz 66_S14_L004_R1_001.fastq.gz > 66-R1.fastq.gz && cat 66_S14_L001_R2_001.fastq.gz 66_S14_L002_R2_001.fastq.gz 66_S14_L003_R2_001.fastq.gz 66_S14_L004_R2_001.fastq.gz > 66-R2.fastq.gz
+cat 67_S15_L001_R1_001.fastq.gz 67_S15_L002_R1_001.fastq.gz 67_S15_L003_R1_001.fastq.gz 67_S15_L004_R1_001.fastq.gz > 67-R1.fastq.gz && cat 67_S15_L001_R2_001.fastq.gz 67_S15_L002_R2_001.fastq.gz 67_S15_L003_R2_001.fastq.gz 67_S15_L004_R2_001.fastq.gz > 67-R2.fastq.gz
+
+cat 68_S16_L001_R1_001.fastq.gz 68_S16_L002_R1_001.fastq.gz 68_S16_L003_R1_001.fastq.gz 68_S16_L004_R1_001.fastq.gz > 68-R1.fastq.gz && cat 68_S16_L001_R2_001.fastq.gz 68_S16_L002_R2_001.fastq.gz 68_S16_L003_R2_001.fastq.gz 68_S16_L004_R2_001.fastq.gz > 68-R2.fastq.gz
+cat 27_S17_L001_R1_001.fastq.gz 27_S17_L002_R1_001.fastq.gz 27_S17_L003_R1_001.fastq.gz 27_S17_L004_R1_001.fastq.gz > 27-R1.fastq.gz && cat 27_S17_L001_R2_001.fastq.gz 27_S17_L002_R2_001.fastq.gz 27_S17_L003_R2_001.fastq.gz 27_S17_L004_R2_001.fastq.gz > 27-R2.fastq.gz
+cat 30_S18_L001_R1_001.fastq.gz 30_S18_L002_R1_001.fastq.gz 30_S18_L003_R1_001.fastq.gz 30_S18_L004_R1_001.fastq.gz > 30-R1.fastq.gz && cat 30_S18_L001_R2_001.fastq.gz 30_S18_L002_R2_001.fastq.gz 30_S18_L003_R2_001.fastq.gz 30_S18_L004_R2_001.fastq.gz > 30-R2.fastq.gz
+
+cat 35_S19_L001_R1_001.fastq.gz 35_S19_L002_R1_001.fastq.gz 35_S19_L003_R1_001.fastq.gz 35_S19_L004_R1_001.fastq.gz > 35-R1.fastq.gz && cat 35_S19_L001_R2_001.fastq.gz 35_S19_L002_R2_001.fastq.gz 35_S19_L003_R2_001.fastq.gz 35_S19_L004_R2_001.fastq.gz > 35-R2.fastq.gz
+cat 61_S20_L001_R1_001.fastq.gz 61_S20_L002_R1_001.fastq.gz 61_S20_L003_R1_001.fastq.gz 61_S20_L004_R1_001.fastq.gz > 61-R1.fastq.gz && cat 61_S20_L001_R2_001.fastq.gz 61_S20_L002_R2_001.fastq.gz 61_S20_L003_R2_001.fastq.gz 61_S20_L004_R2_001.fastq.gz > 61-R2.fastq.gz
+cat 64_S21_L001_R1_001.fastq.gz 64_S21_L002_R1_001.fastq.gz 64_S21_L003_R1_001.fastq.gz 64_S21_L004_R1_001.fastq.gz > 64-R1.fastq.gz && cat 64_S21_L001_R2_001.fastq.gz 64_S21_L002_R2_001.fastq.gz 64_S21_L003_R2_001.fastq.gz 64_S21_L004_R2_001.fastq.gz > 64-R2.fastq.gz
+
+cat 69_S22_L001_R1_001.fastq.gz 69_S22_L002_R1_001.fastq.gz 69_S22_L003_R1_001.fastq.gz 69_S22_L004_R1_001.fastq.gz > 69-R1.fastq.gz && cat 69_S22_L001_R2_001.fastq.gz 69_S22_L002_R2_001.fastq.gz 69_S22_L003_R2_001.fastq.gz 69_S22_L004_R2_001.fastq.gz > 69-R2.fastq.gz
+cat 71_S23_L001_R1_001.fastq.gz 71_S23_L002_R1_001.fastq.gz 71_S23_L003_R1_001.fastq.gz 71_S23_L004_R1_001.fastq.gz > 71-R1.fastq.gz && cat 71_S23_L001_R2_001.fastq.gz 71_S23_L002_R2_001.fastq.gz 71_S23_L003_R2_001.fastq.gz 71_S23_L004_R2_001.fastq.gz > 71-R2.fastq.gz
+cat 72_S24_L001_R1_001.fastq.gz 72_S24_L002_R1_001.fastq.gz 72_S24_L003_R1_001.fastq.gz 72_S24_L004_R1_001.fastq.gz > 72-R1.fastq.gz && cat 72_S24_L001_R2_001.fastq.gz 72_S24_L002_R2_001.fastq.gz 72_S24_L003_R2_001.fastq.gz 72_S24_L004_R2_001.fastq.gz > 72-R2.fastq.gz
+
+cat 74_S25_L001_R1_001.fastq.gz 74_S25_L002_R1_001.fastq.gz 74_S25_L003_R1_001.fastq.gz 74_S25_L004_R1_001.fastq.gz > 74-R1.fastq.gz && cat 74_S25_L001_R2_001.fastq.gz 74_S25_L002_R2_001.fastq.gz 74_S25_L003_R2_001.fastq.gz 74_S25_L004_R2_001.fastq.gz > 74-R2.fastq.gz
+cat 75_S26_L001_R1_001.fastq.gz 75_S26_L002_R1_001.fastq.gz 75_S26_L003_R1_001.fastq.gz 75_S26_L004_R1_001.fastq.gz > 75-R1.fastq.gz && cat 75_S26_L001_R2_001.fastq.gz 75_S26_L002_R2_001.fastq.gz 75_S26_L003_R2_001.fastq.gz 75_S26_L004_R2_001.fastq.gz > 75-R2.fastq.gz
+cat 76_S27_L001_R1_001.fastq.gz 76_S27_L002_R1_001.fastq.gz 76_S27_L003_R1_001.fastq.gz 76_S27_L004_R1_001.fastq.gz > 76-R1.fastq.gz && cat 76_S27_L001_R2_001.fastq.gz 76_S27_L002_R2_001.fastq.gz 76_S27_L003_R2_001.fastq.gz 76_S27_L004_R2_001.fastq.gz > 76-R2.fastq.gz
+
+cat 77_S28_L001_R1_001.fastq.gz 77_S28_L002_R1_001.fastq.gz 77_S28_L003_R1_001.fastq.gz 77_S28_L004_R1_001.fastq.gz > 77-R1.fastq.gz && cat 77_S28_L001_R2_001.fastq.gz 77_S28_L002_R2_001.fastq.gz 77_S28_L003_R2_001.fastq.gz 77_S28_L004_R2_001.fastq.gz > 77-R2.fastq.gz
+cat 78_S29_L001_R1_001.fastq.gz 78_S29_L002_R1_001.fastq.gz 78_S29_L003_R1_001.fastq.gz 78_S29_L004_R1_001.fastq.gz > 78-R1.fastq.gz && cat 78_S29_L001_R2_001.fastq.gz 78_S29_L002_R2_001.fastq.gz 78_S29_L003_R2_001.fastq.gz 78_S29_L004_R2_001.fastq.gz > 78-R2.fastq.gz
+cat 79_S30_L001_R1_001.fastq.gz 79_S30_L002_R1_001.fastq.gz 79_S30_L003_R1_001.fastq.gz 79_S30_L004_R1_001.fastq.gz > 79-R1.fastq.gz && cat 79_S30_L001_R2_001.fastq.gz 79_S30_L002_R2_001.fastq.gz 79_S30_L003_R2_001.fastq.gz 79_S30_L004_R2_001.fastq.gz > 79-R2.fastq.gz
+
+cat 80_S31_L001_R1_001.fastq.gz 80_S31_L002_R1_001.fastq.gz 80_S31_L003_R1_001.fastq.gz 80_S31_L004_R1_001.fastq.gz > 80-R1.fastq.gz && cat 80_S31_L001_R2_001.fastq.gz 80_S31_L002_R2_001.fastq.gz 80_S31_L003_R2_001.fastq.gz 80_S31_L004_R2_001.fastq.gz > 80-R2.fastq.gz
+cat 81_S32_L001_R1_001.fastq.gz 81_S32_L002_R1_001.fastq.gz 81_S32_L003_R1_001.fastq.gz 81_S32_L004_R1_001.fastq.gz > 81-R1.fastq.gz && cat 81_S32_L001_R2_001.fastq.gz 81_S32_L002_R2_001.fastq.gz 81_S32_L003_R2_001.fastq.gz 81_S32_L004_R2_001.fastq.gz > 81-R2.fastq.gz

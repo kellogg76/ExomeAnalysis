@@ -1,0 +1,19 @@
+Merge_FEVR_Files
+
+#Merge VCF’s (VCF must be zipped)
+echo "Zipping snpEff VCF file"
+bgzip $DataPath/$RunCode.snpEff.vcf
+
+echo "Indexing..."
+bcftools index /mnt/d/FEVR28.snpEff.vcf.gz
+bcftools index /mnt/d/FEVR1-27.combined.vcf.gz
+
+echo "Merging..."
+bcftools merge -m id /mnt/d/FEVR28.snpEff.vcf.gz /mnt/d/FEVR29.snpEff.vcf.gz /mnt/d/FEVR1-27.combined.vcf.gz > /mnt/d/FEVR1-29.combined.vcf
+
+bgzip /mnt/d/FEVR1-29.combined.vcf.gz
+bcftools index /mnt/d/FEVR1-29.combined.vcf.gz
+
+#Convert merged VCF into Gemini DB
+echo "Converting VCF to Gemini db..."
+gemini load -v /mnt/d/FEVR1-29.combined.vcf.gz -t snpEff --cores 8 /mnt/d/FEVR1-29.combined.gemini.db

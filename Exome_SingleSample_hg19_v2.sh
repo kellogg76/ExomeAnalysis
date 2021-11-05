@@ -16,7 +16,7 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR50
+RunCode=FEVR101
 
 #Enter sample name below
 sample1=$1
@@ -220,6 +220,24 @@ gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, ge
 echo "...complete."
 }
 
+Exome_QC(){
+echo "***************"
+echo "       Exome_QC      "
+echo "***************"
+#FastQC - needs to use latest version of java, so change if needed, and then change back to java 8
+#sudo update-alternatives --config java
+fastqc $DataPath/*.fastq.gz
+
+#MultiQC - Done in a Conda environment
+#conda activate py3.6
+#cd to directory and then 
+#multiqc .
+
+#Move QC Files to new dir
+mkdir fastqc
+mv *_fastqc* fastqc
+}
+
 Coverage(){
  echo "***************"
  echo "Calculating exome coverage"
@@ -384,6 +402,7 @@ SNPEff
 Gemini_Update
 Gemini_db
 Gemini_Export
+Exome_QC
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet
 #######Exomiser                    #Rarely used

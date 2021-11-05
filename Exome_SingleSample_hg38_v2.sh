@@ -3,8 +3,6 @@
 #Doesn't work due to Gemini DB not having the frequency data for hg38, possibly due to snpEff not annotating correctly
 #All exports work but the  text files of variants are longer than expected as it's exporting all variants instead of those with matching max_aaf_all data
 
-
-
 #Command to run this script is ./Exome_SingleSample_hg38_v2.sh sample1
 #eg ./Exome_SingleSample_hg38_v2.sh 549
 

@@ -1,0 +1,49 @@
+#####FEVR Pipeline for 7 Samples#####
+
+###Run the following using the Exome_ThreeSample_hg19_v2.sh script
+#move_fastq
+
+cat F10-085_S1_L001_R1_001.fastq.gz F10-085_S1_L002_R1_001.fastq.gz F10-085_S1_L003_R1_001.fastq.gz F10-085_S1_L004_R1_001.fastq.gz > F10-085-R1.fastq.gz && cat F10-085_S1_L001_R2_001.fastq.gz F10-085_S1_L002_R2_001.fastq.gz F10-085_S1_L003_R2_001.fastq.gz F10-085_S1_L004_R2_001.fastq.gz > F10-085-R2.fastq.gz
+cat F10-086_S2_L001_R1_001.fastq.gz F10-086_S2_L002_R1_001.fastq.gz F10-086_S2_L003_R1_001.fastq.gz F10-086_S2_L004_R1_001.fastq.gz > F10-086-R1.fastq.gz && cat F10-086_S2_L001_R2_001.fastq.gz F10-086_S2_L002_R2_001.fastq.gz F10-086_S2_L003_R2_001.fastq.gz F10-086_S2_L004_R2_001.fastq.gz > F10-086-R2.fastq.gz
+cat F10-087_S3_L001_R1_001.fastq.gz F10-087_S3_L002_R1_001.fastq.gz F10-087_S3_L003_R1_001.fastq.gz F10-087_S3_L004_R1_001.fastq.gz > F10-087-R1.fastq.gz && cat F10-087_S3_L001_R2_001.fastq.gz F10-087_S3_L002_R2_001.fastq.gz F10-087_S3_L003_R2_001.fastq.gz F10-087_S3_L004_R2_001.fastq.gz > F10-087-R2.fastq.gz
+cat F10-088_S4_L001_R1_001.fastq.gz F10-088_S4_L002_R1_001.fastq.gz F10-088_S4_L003_R1_001.fastq.gz F10-088_S4_L004_R1_001.fastq.gz > F10-088-R1.fastq.gz && cat F10-088_S4_L001_R2_001.fastq.gz F10-088_S4_L002_R2_001.fastq.gz F10-088_S4_L003_R2_001.fastq.gz F10-088_S4_L004_R2_001.fastq.gz > F10-088-R2.fastq.gz
+cat F10-089_S5_L001_R1_001.fastq.gz F10-089_S5_L002_R1_001.fastq.gz F10-089_S5_L003_R1_001.fastq.gz F10-089_S5_L004_R1_001.fastq.gz > F10-089-R1.fastq.gz && cat F10-089_S5_L001_R2_001.fastq.gz F10-089_S5_L002_R2_001.fastq.gz F10-089_S5_L003_R2_001.fastq.gz F10-089_S5_L004_R2_001.fastq.gz > F10-089-R2.fastq.gz
+cat F10-090_S6_L001_R1_001.fastq.gz F10-090_S6_L002_R1_001.fastq.gz F10-090_S6_L003_R1_001.fastq.gz F10-090_S6_L004_R1_001.fastq.gz > F10-090-R1.fastq.gz && cat F10-090_S6_L001_R2_001.fastq.gz F10-090_S6_L002_R2_001.fastq.gz F10-090_S6_L003_R2_001.fastq.gz F10-090_S6_L004_R2_001.fastq.gz > F10-090-R2.fastq.gz
+cat F10-091_S7_L001_R1_001.fastq.gz F10-091_S7_L002_R1_001.fastq.gz F10-091_S7_L003_R1_001.fastq.gz F10-091_S7_L004_R1_001.fastq.gz > F10-091-R1.fastq.gz && cat F10-091_S7_L001_R2_001.fastq.gz F10-091_S7_L002_R2_001.fastq.gz F10-091_S7_L003_R2_001.fastq.gz F10-091_S7_L004_R2_001.fastq.gz > F10-091-R2.fastq.gz
+
+###Run the following using the Exome_ThreeSample_hg19_v2.sh script
+#BWA_Step
+#Read_Groups
+#Build_BAM_Index
+#Mark_Duplicates
+#Realigner_1
+#Realigner_2
+#Recalibration    
+
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-085.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-085.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-086.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-086.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-087.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-087.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-088.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-088.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-089.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-089.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-090.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-090.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-091.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/FEVR29/F10-091.haplotypecaller.g.vcf -nct 7
+
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T GenotypeGVCFs -R /mnt/d/hg19/human_g1k_v37.fasta --variant /mnt/d/FEVR29/F10-085.haplotypecaller.g.vcf --variant /mnt/d/FEVR29/F10-086.haplotypecaller.g.vcf --variant /mnt/d/FEVR29/F10-087.haplotypecaller.g.vcf --variant /mnt/d/FEVR29/F10-088.haplotypecaller.g.vcf  --variant /mnt/d/FEVR29/F10-089.haplotypecaller.g.vcf  --variant /mnt/d/FEVR29/F10-090.haplotypecaller.g.vcf  --variant /mnt/d/FEVR29/F10-091.haplotypecaller.g.vcf -o /mnt/d/FEVR29/FEVR29.haplotypecaller.vcf
+zless /mnt/d/FEVR29/FEVR29.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r /mnt/d/hg19/human_g1k_v37.fasta - > /mnt/d/FEVR29/FEVR29.hc.normalized.vcf
+java -Xmx24g -jar ~/GenomeAnalysisTK.jar -T VariantAnnotator -R /mnt/d/hg19/human_g1k_v37.fasta -nt 7 --group StandardAnnotation --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/FEVR29/F10-085.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-086.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-087.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-088.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-089.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-090.recalibrated.sorted.bam -I /mnt/d/FEVR29/F10-091.recalibrated.sorted.bam --variant /mnt/d/FEVR29/FEVR29.hc.normalized.vcf -L /mnt/d/FEVR29/FEVR29.hc.normalized.vcf -o /mnt/d/FEVR29/FEVR29.annotated.vcf
+java -Xmx24g -jar ~/GenomeAnalysisTK.jar -T VariantFiltration -R /mnt/d/hg19/human_g1k_v37.fasta --filterExpression "MQ0 > 50.0" --filterName "HighMQ0" --filterExpression "DP < 10.0" --filterName "LowDepth" --filterExpression "QUAL < 10.0" --filterName "LowQual" --filterExpression "MQ < 10.0" --filterName "LowMappingQual" --variant /mnt/d/FEVR29/FEVR29.annotated.vcf -o /mnt/d/FEVR29/FEVR29.filtered.vcf
+
+java -Xmx40g -jar ~/snpEff/snpEff.jar GRCh37.75 /mnt/d/FEVR29/FEVR29.filtered.vcf > /mnt/d/FEVR29/FEVR29.snpEff.vcf
+mv snpEff_genes.txt /mnt/d/FEVR29/FEVR29.snpEff_genes.txt && mv snpEff_summary.html /mnt/d/FEVR29/FEVR29.snpEff_summary.html
+
+gemini update --dataonly --extra gerp_bp
+gemini load -v /mnt/d/FEVR29/FEVR29.snpEff.vcf -t snpEff --cores 8 /mnt/d/FEVR29/FEVR29.gemini.db
+
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.F10-085 == HET OR gt_types.F10-086 == HET OR gt_types.F10-087 == HET OR gt_types.F10-088 == HET OR gt_types.F10-089 == HET OR gt_types.F10-090 == HET OR gt_types.F10-091 == HET" /mnt/d/FEVR29/FEVR29.gemini.db > /mnt/d/FEVR29/FEVR29.het_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.F10-085 != HOM_REF OR gt_types.F10-086 != HOM_REF OR gt_types.F10-087 != HOM_REF OR gt_types.F10-088 != HOM_REF OR gt_types.F10-089 != HOM_REF OR gt_types.F10-090 != HOM_REF OR gt_types.F10-091 != HOM_REF" /mnt/d/FEVR29/FEVR29.gemini.db > /mnt/d/FEVR29/FEVR29.non_hom_med_high_rare.txt
+gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.F10-085 == HOM_ALT OR gt_types.F10-086 == HOM_ALT OR gt_types.F10-087 == HOM_ALT OR gt_types.F10-088 == HOM_ALT OR gt_types.F10-089 == HOM_ALT OR gt_types.F10-090 == HOM_ALT OR gt_types.F10-091 == HOM_ALT" /mnt/d/FEVR29/FEVR29.gemini.db > /mnt/d/FEVR29/FEVR29.hom_alt_med_high_rare.txt
+
+#####FEVR Pipeline for 7 Samples#####
+
+
+

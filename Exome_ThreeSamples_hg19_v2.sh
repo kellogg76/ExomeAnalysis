@@ -277,6 +277,24 @@ echo "...complete."
 #gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_so, impact_Severity, gerp_bp_score, in_omim, clinvar_sig, clinvar_disease_name, clinvar_origin, clinvar_gene_phenotype, is_conserved, cosmic_ids, qual, filter, depth, qual_depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.2644 == HOM_ALT OR gt_types.F10-025 == HOM_ALT OR gt_types.F10-021 == HOM_ALT" /mnt/d/p35_FEVR_Batch001.db > /mnt/d/FEVR1.hom_alt_med_high_rare.txt
 }
 
+Exome_QC(){
+echo "***************"
+echo "       Exome_QC      "
+echo "***************"
+#FastQC - needs to use latest version of java, so change if needed, and then change back to java 8
+#sudo update-alternatives --config java
+fastqc $DataPath/*.fastq.gz
+
+#MultiQC - Done in a Conda environment
+#conda activate py3.6
+#cd to directory and then 
+#multiqc .
+
+#Move QC Files to new dir
+mkdir fastqc
+mv *_fastqc* fastqc
+}
+
 Coverage(){
  #Calculating exome coverage
  echo "***************"
@@ -470,6 +488,7 @@ SNPEff
 Gemini_Update
 Gemini_db
 #Gemini_Export
+Exome_QC(
 #####################Coverage #Not working yet for hg19
 #####################VEP            #Not working yet
 #######Exomiser                    #Rarely used

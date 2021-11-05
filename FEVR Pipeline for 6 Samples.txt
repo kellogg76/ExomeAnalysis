@@ -1,0 +1,51 @@
+#####FEVR Pipeline for 6 Samples#####
+
+###Run the following using the Exome_ThreeSample_hg19_v2.sh script
+#move_fastq
+
+cat 21_S1_L001_R1_001.fastq.gz 21_S1_L002_R1_001.fastq.gz 21_S1_L003_R1_001.fastq.gz 21_S1_L004_R1_001.fastq.gz > 21-R1.fastq.gz && cat 21_S1_L001_R2_001.fastq.gz 21_S1_L002_R2_001.fastq.gz 21_S1_L003_R2_001.fastq.gz 21_S1_L004_R2_001.fastq.gz > 21-R2.fastq.gz
+cat 45_S2_L001_R1_001.fastq.gz 45_S2_L002_R1_001.fastq.gz 45_S2_L003_R1_001.fastq.gz 45_S2_L004_R1_001.fastq.gz > 45-R1.fastq.gz && cat 45_S2_L001_R2_001.fastq.gz 45_S2_L002_R2_001.fastq.gz 45_S2_L003_R2_001.fastq.gz 45_S2_L004_R2_001.fastq.gz > 45-R2.fastq.gz
+cat 47_S3_L001_R1_001.fastq.gz 47_S3_L002_R1_001.fastq.gz 47_S3_L003_R1_001.fastq.gz 47_S3_L004_R1_001.fastq.gz > 47-R1.fastq.gz && cat 47_S3_L001_R2_001.fastq.gz 47_S3_L002_R2_001.fastq.gz 47_S3_L003_R2_001.fastq.gz 47_S3_L004_R2_001.fastq.gz > 47-R2.fastq.gz
+cat 6_S4_L001_R1_001.fastq.gz 6_S4_L002_R1_001.fastq.gz 6_S4_L003_R1_001.fastq.gz 6_S4_L004_R1_001.fastq.gz > 6-R1.fastq.gz && cat 6_S4_L001_R2_001.fastq.gz 6_S4_L002_R2_001.fastq.gz 6_S4_L003_R2_001.fastq.gz 6_S4_L004_R2_001.fastq.gz > 6-R2.fastq.gz
+cat 34_S5_L001_R1_001.fastq.gz 34_S5_L002_R1_001.fastq.gz 34_S5_L003_R1_001.fastq.gz 34_S5_L004_R1_001.fastq.gz > 34-R1.fastq.gz && cat 34_S5_L001_R2_001.fastq.gz 34_S5_L002_R2_001.fastq.gz 34_S5_L003_R2_001.fastq.gz 34_S5_L004_R2_001.fastq.gz > 34-R2.fastq.gz
+cat 50_S6_L001_R1_001.fastq.gz 50_S6_L002_R1_001.fastq.gz 50_S6_L003_R1_001.fastq.gz 50_S6_L004_R1_001.fastq.gz > 50-R1.fastq.gz && cat 50_S6_L001_R2_001.fastq.gz 50_S6_L002_R2_001.fastq.gz 50_S6_L003_R2_001.fastq.gz 50_S6_L004_R2_001.fastq.gz > 50-R2.fastq.gz
+
+cat 8_S7_L001_R1_001.fastq.gz 8_S7_L002_R1_001.fastq.gz 8_S7_L003_R1_001.fastq.gz 8_S7_L004_R1_001.fastq.gz > 8-R1.fastq.gz && cat 8_S7_L001_R2_001.fastq.gz 8_S7_L002_R2_001.fastq.gz 8_S7_L003_R2_001.fastq.gz 8_S7_L004_R2_001.fastq.gz > 8-R2.fastq.gz
+cat 17_S8_L001_R1_001.fastq.gz 17_S8_L002_R1_001.fastq.gz 17_S8_L003_R1_001.fastq.gz 17_S8_L004_R1_001.fastq.gz > 17-R1.fastq.gz && cat 17_S8_L001_R2_001.fastq.gz 17_S8_L002_R2_001.fastq.gz 17_S8_L003_R2_001.fastq.gz 17_S8_L004_R2_001.fastq.gz > 17-R2.fastq.gz
+cat 35_S9_L001_R1_001.fastq.gz 35_S9_L002_R1_001.fastq.gz 35_S9_L003_R1_001.fastq.gz 35_S9_L004_R1_001.fastq.gz > 35-R1.fastq.gz && cat 35_S9_L001_R2_001.fastq.gz 35_S9_L002_R2_001.fastq.gz 35_S9_L003_R2_001.fastq.gz 35_S9_L004_R2_001.fastq.gz > 35-R2.fastq.gz
+cat 51_S10_L001_R1_001.fastq.gz 51_S10_L002_R1_001.fastq.gz 51_S10_L003_R1_001.fastq.gz 51_S10_L004_R1_001.fastq.gz > 51-R1.fastq.gz && cat 51_S10_L001_R2_001.fastq.gz 51_S10_L002_R2_001.fastq.gz 51_S10_L003_R2_001.fastq.gz 51_S10_L004_R2_001.fastq.gz > 51-R2.fastq.gz
+cat 18_S11_L001_R1_001.fastq.gz 18_S11_L002_R1_001.fastq.gz 18_S11_L003_R1_001.fastq.gz 18_S11_L004_R1_001.fastq.gz > 18-R1.fastq.gz && cat 18_S11_L001_R2_001.fastq.gz 18_S11_L002_R2_001.fastq.gz 18_S11_L003_R2_001.fastq.gz 18_S11_L004_R2_001.fastq.gz > 18-R2.fastq.gz
+cat 22_S12_L001_R1_001.fastq.gz 22_S12_L002_R1_001.fastq.gz 22_S12_L003_R1_001.fastq.gz 22_S12_L004_R1_001.fastq.gz > 22-R1.fastq.gz && cat 22_S12_L001_R2_001.fastq.gz 22_S12_L002_R2_001.fastq.gz 22_S12_L003_R2_001.fastq.gz 22_S12_L004_R2_001.fastq.gz > 22-R2.fastq.gz
+
+
+###Run the following using the Exome_ThreeSample_hg19_v2.sh script
+#BWA_Step
+#Read_Groups
+#Build_BAM_Index
+#Mark_Duplicates
+#Realigner_1
+#Realigner_2
+#Recalibration    
+
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-21.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-21.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-45.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-45.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-47.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-47.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-6.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-6.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-34.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-34.haplotypecaller.g.vcf -nct 7
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T HaplotypeCaller -R /mnt/d/hg19/human_g1k_v37.fasta --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-50.recalibrated.sorted.bam -L /mnt/d/hg19/ccds_hg19.bed --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o /mnt/d/Marcato1/PM-50.haplotypecaller.g.vcf -nct 7
+
+java -Xmx40g -jar ~/GenomeAnalysisTK.jar -T GenotypeGVCFs -R /mnt/d/hg19/human_g1k_v37.fasta --variant /mnt/d/Marcato1/PM-21.haplotypecaller.g.vcf --variant /mnt/d/Marcato1/PM-45.haplotypecaller.g.vcf --variant /mnt/d/Marcato1/PM-47.haplotypecaller.g.vcf --variant /mnt/d/Marcato1/PM-6.haplotypecaller.g.vcf  --variant /mnt/d/Marcato1/PM-34.haplotypecaller.g.vcf  --variant /mnt/d/Marcato1/PM-50.haplotypecaller.g.vcf  -o /mnt/d/Marcato1/Marcato1.haplotypecaller.vcf
+zless /mnt/d/Marcato1/Marcato1.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r /mnt/d/hg19/human_g1k_v37.fasta - > /mnt/d/Marcato1/Marcato1.hc.normalized.vcf
+java -Xmx24g -jar ~/GenomeAnalysisTK.jar -T VariantAnnotator -R /mnt/d/hg19/human_g1k_v37.fasta -nt 7 --group StandardAnnotation --dbsnp /mnt/d/hg19/dbsnp_138.b37.vcf -I /mnt/d/Marcato1/PM-21.recalibrated.sorted.bam -I /mnt/d/Marcato1/PM-45.recalibrated.sorted.bam -I /mnt/d/Marcato1/PM-47.recalibrated.sorted.bam -I /mnt/d/Marcato1/PM-6.recalibrated.sorted.bam -I /mnt/d/Marcato1/PM-34.recalibrated.sorted.bam -I /mnt/d/Marcato1/PM-50.recalibrated.sorted.bam  --variant /mnt/d/Marcato1/Marcato1.hc.normalized.vcf -L /mnt/d/Marcato1/Marcato1.hc.normalized.vcf -o /mnt/d/Marcato1/Marcato1.annotated.vcf
+java -Xmx24g -jar ~/GenomeAnalysisTK.jar -T VariantFiltration -R /mnt/d/hg19/human_g1k_v37.fasta --filterExpression "MQ0 > 50.0" --filterName "HighMQ0" --filterExpression "DP < 10.0" --filterName "LowDepth" --filterExpression "QUAL < 10.0" --filterName "LowQual" --filterExpression "MQ < 10.0" --filterName "LowMappingQual" --variant /mnt/d/Marcato1/Marcato1.annotated.vcf -o /mnt/d/Marcato1/Marcato1.filtered.vcf
+
+java -Xmx40g -jar ~/snpEff/snpEff.jar GRCh37.75 /mnt/d/Marcato1/Marcato1.filtered.vcf > /mnt/d/Marcato1/Marcato1.snpEff.vcf
+mv snpEff_genes.txt /mnt/d/Marcato1/Marcato1.snpEff_genes.txt
+mv snpEff_summary.html /mnt/d/Marcato1/Marcato1.snpEff_summary.html
+
+gemini update --dataonly --extra gerp_bp
+gemini load -v /mnt/d/Marcato1/Marcato1.snpEff.vcf -t snpEff --cores 8 /mnt/d/Marcato1/Marcato1.gemini.db
+
+*gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.PM-21 == HET OR gt_types.PM-45 == HET OR gt_types.PM-47 == HET OR gt_types.PM-6 == HET OR gt_types.PM-34 == HET OR gt_types.PM-50 == HET" /mnt/d/Marcato1/Marcato1.gemini.db > /mnt/d/Marcato1/Marcato1.het_med_high_rare.txt
+*gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids, (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.PM-21 != HOM_REF OR gt_types.PM-45 != HOM_REF OR gt_types.PM-47 != HOM_REF OR gt_types.PM-6 != HOM_REF OR gt_types.PM-34 != HOM_REF OR gt_types.PM-50 != HOM_REF" /mnt/d/Marcato1/Marcato1.gemini.db > /mnt/d/Marcato1/Marcato1.non_hom_med_high_rare.txt
+*gemini query -q "select chrom, start, end, ref, alt, codon_change, aa_change, gene, transcript, biotype, impact, impact_Severity, gerp_bp_score, aaf_exac_all, max_aaf_all, gnomad_num_het, gnomad_num_hom_alt, gnomad_num_chroms, in_omim, clinvar_sig, clinvar_disease_name, clinvar_gene_phenotype, qual, filter, depth, vcf_id, rs_ids,  (gts).(*) from variants where impact_Severity != 'LOW' AND max_aaf_all < 0.01" --header --gt-filter "gt_types.PM-21 == HOM_ALT OR gt_types.PM-45 == HOM_ALT OR gt_types.PM-47 == HOM_ALT OR gt_types.PM-6 == HOM_ALT OR gt_types.PM-34 == HOM_ALT OR gt_types.PM-50 == HOM_ALT" /mnt/d/Marcato1/Marcato1.gemini.db > /mnt/d/Marcato1/Marcato1.hom_alt_med_high_rare.txt
