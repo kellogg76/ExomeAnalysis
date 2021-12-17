@@ -1,0 +1,114 @@
+RNASeq Analysis Pipeline
+
+*******
+*Setup*
+*******
+RNA_REF_INDEX = /mnt/d/
+RNA_DATA_DIR = /mnt/d/RNASeq002
+
+
+
+*********
+*RNA QC*
+*********
+FastQC
+fastqc *.fastq.gz
+
+MultiQC
+python3 -m multiqc .
+
+Move QC Files to new dir
+mkdir fastqc
+mv *_fastqc* fastqc
+
+***********
+*Alignment*
+***********
+TruSeq library prep = RF
+
+HISAT2
+hisat2 -p 16 --rg-id=25 --rg SM:Control_Stem_Cell-Rep1 --rg LB:Control_Stem_Cell-Rep1 --rg PL:ILLUMINA -x /mnt/d/hg38/grch38/genome --dta --rna-strandness RF -1 /mnt/d/RNASeq002/25-R1.fastq.gz -2 /mnt/d/RNASeq002/25-R2.fastq.gz -S /mnt/d/RNASeq002/analysis/25.sam
+hisat2 -p 16 --rg-id=26 --rg SM:Control_Stem_Cell-Rep2 --rg LB:Control_Stem_Cell-Rep2 --rg PL:ILLUMINA -x /mnt/d/hg38/grch38/genome --dta --rna-strandness RF -1 /mnt/d/RNASeq002/26-R1.fastq.gz -2 /mnt/d/RNASeq002/26-R2.fastq.gz -S /mnt/d/RNASeq002/analysis/26.sam
+hisat2 -p 16 --rg-id=27 --rg SM:Control_Stem_Cell-Rep3 --rg LB:Control_Stem_Cell-Rep3 --rg PL:ILLUMINA -x /mnt/d/hg38/grch38/genome --dta --rna-strandness RF -1 /mnt/d/RNASeq002/27-R1.fastq.gz -2 /mnt/d/RNASeq002/27-R2.fastq.gz -S /mnt/d/RNASeq002/analysis/27.sam
+
+hisat2 -p 16 --rg-id=28 --rg SM:Patient_Stem_Cell-Rep1 --rg LB:Patient_Stem_Cell-Rep1 --rg PL:ILLUMINA -x /mnt/d/hg38/grch38/genome --dta --rna-strandness RF -1 /mnt/d/RNASeq002/28-R1.fastq.gz -2 /mnt/d/RNASeq002/28-R2.fastq.gz -S /mnt/d/RNASeq002/analysis/28.sam
+hisat2 -p 16 --rg-id=29 --rg SM:Patient_Stem_Cell-Rep2 --rg LB:Patient_Stem_Cell-Rep2 --rg PL:ILLUMINA -x /mnt/d/hg38/grch38/genome --dta --rna-strandness RF -1 /mnt/d/RNASeq002/29-R1.fastq.gz -2 /mnt/d/RNASeq002/29-R2.fastq.gz -S /mnt/d/RNASeq002/analysis/29.sam
+
+************************
+*SAM to BAM Conversion*
+************************
+samtools sort -@ 16 -o /mnt/d/RNASeq002/analysis/25.bam /mnt/d/RNASeq002/analysis/25.sam
+samtools sort -@ 16 -o /mnt/d/RNASeq002/analysis/26.bam /mnt/d/RNASeq002/analysis/26.sam
+samtools sort -@ 16 -o /mnt/d/RNASeq002/analysis/27.bam /mnt/d/RNASeq002/analysis/27.sam
+
+samtools sort -@ 16 -o /mnt/d/RNASeq002/analysis/28.bam /mnt/d/RNASeq002/analysis/28.sam
+samtools sort -@ 16 -o /mnt/d/RNASeq002/analysis/29.bam /mnt/d/RNASeq002/analysis/29.sam
+
+*****************
+*Index BAM Files*
+*****************
+samtools index /mnt/d/RNASeq002/analysis/25.bam
+samtools index /mnt/d/RNASeq002/analysis/26.bam
+samtools index /mnt/d/RNASeq002/analysis/27.bam
+
+samtools index /mnt/d/RNASeq002/analysis/28.bam
+samtools index /mnt/d/RNASeq002/analysis/29.bam
+
+************************
+*Merge HISAT2 BAM Files*
+************************
+java -Xmx2g -jar ~/picard.jar MergeSamFiles OUTPUT=/mnt/d/RNASeq002/analysis/Ctrl_Stem_Cell.bam INPUT=/mnt/d/RNASeq002/analysis/25.bam INPUT=/mnt/d/RNASeq002/analysis/26.bam INPUT=/mnt/d/RNASeq002/analysis/27.bam
+java -Xmx2g -jar ~/picard.jar MergeSamFiles OUTPUT=/mnt/d/RNASeq002/analysis/Patient_Stem_Cell.bam INPUT=/mnt/d/RNASeq002/analysis/28.bam INPUT=/mnt/d/RNASeq002/analysis/29.bam
+
+*****************
+*Index BAM Files*
+*****************
+samtools index /mnt/d/RNASeq002/analysis/Control_Stem_Cell.bam
+samtools index /mnt/d/RNASeq002/analysis/Patient_Stem_Cell.bam
+
+**********
+*StringTie* use these files to perform various comparisons of expression estimation tools (e.g. stringtie, kallisto, raw counts) and metrics (e.g. FPKM vs TPM).
+**********
+stringtie --rf -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -e -B -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep1/transcripts.gtf -A /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep1/gene_abundances.tsv /mnt/d/RNASeq002/analysis/25.bam
+stringtie --rf -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -e -B -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep2/transcripts.gtf -A /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep2/gene_abundances.tsv /mnt/d/RNASeq002/analysis/26.bam
+stringtie --rf -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -e -B -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep3/transcripts.gtf -A /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep3/gene_abundances.tsv /mnt/d/RNASeq002/analysis/27.bam
+
+stringtie --rf -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -e -B -o /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep1/transcripts.gtf -A /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep1/gene_abundances.tsv /mnt/d/RNASeq002/analysis/28.bam
+stringtie --rf -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -e -B -o /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep2/transcripts.gtf -A /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep2/gene_abundances.tsv /mnt/d/RNASeq002/analysis/29.bam
+
+Alternate stringtie to try
+stringtie -e -B -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep1/transcripts.gtf /mnt/d/RNASeq002/analysis/25.bam
+stringtie -e -B -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep2/transcripts.gtf /mnt/d/RNASeq002/analysis/26.bam
+stringtie -e -B -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -o /mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep3/transcripts.gtf /mnt/d/RNASeq002/analysis/27.bam
+
+stringtie -e -B -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -o /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep1/transcripts.gtf /mnt/d/RNASeq002/analysis/28.bam
+stringtie -e -B -p 16 -G /mnt/d/hg38/Homo_sapiens.GRCh38.84.gtf -o /mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep2/transcripts.gtf /mnt/d/RNASeq002/analysis/29.bam
+
+Change to /mnt/d/RNASeq002/analysis/
+~/stringtie_expression_matrix.pl --expression_metric=TPM --result_dirs='Control_Stem_Cell-Rep1,Control_Stem_Cell-Rep2,Control_Stem_Cell-Rep3,Patient_Stem_Cell-Rep1,Patient_Stem_Cell-Rep2' --transcript_matrix_file=/mnt/d/RNASeq002/analysis/transcript_tpm_all_samples.tsv --gene_matrix_file=/mnt/d/RNASeq002/analysis/gene_tpm_all_samples.tsv
+~/stringtie_expression_matrix.pl --expression_metric=FPKM --result_dirs='Control_Stem_Cell-Rep1,Control_Stem_Cell-Rep2,Control_Stem_Cell-Rep3,Patient_Stem_Cell-Rep1,Patient_Stem_Cell-Rep2' --transcript_matrix_file=transcript_fpkm_all_samples.tsv --gene_matrix_file=gene_fpkm_all_samples.tsv
+
+~/stringtie_expression_matrix.pl --expression_metric=Coverage --result_dirs='Control_Stem_Cell-Rep1,Control_Stem_Cell-Rep2,Control_Stem_Cell-Rep3,Patient_Stem_Cell-Rep1,Patient_Stem_Cell-Rep2' --transcript_matrix_file=transcript_coverage_all_samples.tsv --gene_matrix_file=gene_coverage_all_samples.tsv
+
+**********
+*Ballgown*
+**********
+mkdir /mnt/d/RNASeq002/analysis/ballgown
+
+testing
+printf "\"ids\",\"type\",\"path\"\n\"Control_Stem_Cell-Rep1\",\"Control\",\"/mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep1\"\n\"Control_Stem_Cell-Rep2\",\"Control\",\"/mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep2\"\n\"Control_Stem_Cell-Rep3\",\"Control\",\"/mnt/d/RNASeq002/analysis/Control_Stem_Cell-Rep3\"\n\"Patient_Stem_Cell-Rep-1\",\"Patient\",\"/mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep1\"\n\"Patient_Stem_Cell-Rep-2\",\"Patient\",\"/mnt/d/RNASeq002/analysis/Patient_Stem_Cell-Rep2\"\n" > /mnt/d/RNASeq002/analysis/Control_vs_Patient.csv
+
+printf "\"ids\",\"type\",\"path\"\n\"Control_Stem_Cell-Rep1\",\"Control\",\"/mnt/d/RNASeq002/analysis/ballgown/Control_Stem_Cell-Rep1\"\n\"Control_Stem_Cell-Rep2\",\"Control\",\"/mnt/d/RNASeq002/analysis/ballgown/Control_Stem_Cell-Rep2\"\n\"Control_Stem_Cell-Rep3\",\"Control\",\"/mnt/d/RNASeq002/analysis/ballgown/Control_Stem_Cell-Rep3\"\n\"Patient_Stem_Cell-Rep-1\",\"Patient\",\"/mnt/d/RNASeq002/analysis/ballgown/Patient_Stem_Cell-Rep1\"\n\"Patient_Stem_Cell-Rep-2\",\"Patient\",\"/mnt/d/RNASeq002/analysis/ballgown/Patient_Stem_Cell-Rep2\"\n" > /mnt/d/RNASeq002/analysis/Control_vs_Patient.csv
+
+Change the path in the Control_vs_Patient.csv to D:/RNASeq002/analysis/???
+
+
+
+
+
+
+
+
+
+
+
