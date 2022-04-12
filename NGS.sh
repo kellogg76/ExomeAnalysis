@@ -20,6 +20,27 @@ DataPath=/mnt/d/$RunCode
 TempPath=$DataPath/temp
 mkdir -p $TempPath
 
+Header_text(){
+WHITE='\033[1;37m'
+BLUE='\033[0;34m'
+DGRAY='\033[1;30m'
+printf "${WHITE}   
+           ____   __   __       ___  ____  __ _   __   _  _  __  ___  ____ 
+          (    \ / _\ (  )     / __)(  __)(  ( \ /  \ ( \/ )(  )/ __)/ ___)
+           ) D (/    \/ (_/\  ( (_ \ ) _) /    /(  O )/ \/ \ )(( (__ \___ \   
+          (____/\_/\_/\____/   \___/(____)\_)__) \__/ \_)(_/(__)\___)(____/
+    	             ___  __  ____  ____  ____    __     __   ____		 	   
+                    / __)/  \(  _ \(  __)/ ___)  (  )   / _\ (  _ \  
+                   ( (__(  O ))   / ) _) \___ \  / (_/\/    \ ) _ (                       
+                    \___)\__/(__\_)(____)(____/  \____/\_/\_/(____/                      
+              ${BLUE}    Contact: Mat Nightingale     	Email: Genomics@Dal.ca
+ ${DGRAY}      o O       o O       o O       o O       o O       o O       o O       o O 
+     o | | O   o | | O   o | | O   o | | O   o | | O   o | | O   o | | O   o | | O
+   O | | | | O | | | | O | | | | O | | | | O | | | | O | | | | O | | | | O | | | | O
+     O | | o   O | | o   O | | o   O | | o   O | | o   O | | o   O | | o   O | | o
+       O o       O o       O o       O o       O o       O o       O o       O o\n"
+}
+
 unzip_fastq(){
 echo "Unzipping fastq"
 echo $sample1
@@ -57,7 +78,8 @@ printf "%b\n" >> $DataPath/NGS_report_text.txt
 }
 
 #unzip_fastq
-report_data_grabber
+Header_text
+#report_data_grabber
 
 <<to_add
 
