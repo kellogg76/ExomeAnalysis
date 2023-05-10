@@ -16,7 +16,7 @@ echo "This pipeline uses hg19 for all analysis"
 echo "***************"
 
 #Run Number
-RunCode=FEVR18
+RunCode=FEVR31
 
 #Enter sample names below
 sample1=$1
@@ -82,6 +82,17 @@ echo "Catenating: " $sample3
 cat $DataPath/$sample3\_S3_L001_R1_001.fastq.gz $DataPath/$sample3\_S3_L002_R1_001.fastq.gz $DataPath/$sample3\_S3_L003_R1_001.fastq.gz $DataPath/$sample3\_S3_L004_R1_001.fastq.gz > $DataPath/$sample3-R1.fastq.gz
 cat $DataPath/$sample3\_S3_L001_R2_001.fastq.gz $DataPath/$sample3\_S3_L002_R2_001.fastq.gz $DataPath/$sample3\_S3_L003_R2_001.fastq.gz $DataPath/$sample3\_S3_L004_R2_001.fastq.gz > $DataPath/$sample3-R2.fastq.gz
 
+echo "Catenating: " $sample4
+cat $DataPath/$sample4\_S4_L001_R1_001.fastq.gz $DataPath/$sample4\_S4_L002_R1_001.fastq.gz $DataPath/$sample4\_S4_L003_R1_001.fastq.gz $DataPath/$sample4\_S4_L004_R1_001.fastq.gz > $DataPath/$sample4-R1.fastq.gz
+cat $DataPath/$sample4\_S4_L001_R2_001.fastq.gz $DataPath/$sample4\_S4_L002_R2_001.fastq.gz $DataPath/$sample4\_S4_L003_R2_001.fastq.gz $DataPath/$sample4\_S4_L004_R2_001.fastq.gz > $DataPath/$sample4-R2.fastq.gz
+echo "Catenating: " $sample5
+cat $DataPath/$sample5\_S5_L001_R1_001.fastq.gz $DataPath/$sample5\_S5_L002_R1_001.fastq.gz $DataPath/$sample5\_S5_L003_R1_001.fastq.gz $DataPath/$sample5\_S5_L004_R1_001.fastq.gz > $DataPath/$sample5-R1.fastq.gz
+cat $DataPath/$sample5\_S5_L001_R2_001.fastq.gz $DataPath/$sample5\_S5_L002_R2_001.fastq.gz $DataPath/$sample5\_S5_L003_R2_001.fastq.gz $DataPath/$sample5\_S5_L004_R2_001.fastq.gz > $DataPath/$sample5-R2.fastq.gz
+echo "Catenating: " $sample6
+cat $DataPath/$sample6\_S6_L001_R1_001.fastq.gz $DataPath/$sample6\_S6_L002_R1_001.fastq.gz $DataPath/$sample6\_S6_L003_R1_001.fastq.gz $DataPath/$sample6\_S6_L004_R1_001.fastq.gz > $DataPath/$sample6-R1.fastq.gz
+cat $DataPath/$sample6\_S6_L001_R2_001.fastq.gz $DataPath/$sample6\_S6_L002_R2_001.fastq.gz $DataPath/$sample6\_S6_L003_R2_001.fastq.gz $DataPath/$sample6\_S6_L004_R2_001.fastq.gz > $DataPath/$sample6-R2.fastq.gz
+
+<<to_add
 #Add code to delete the uncatenated files
 echo "Deleting uncatenated files for: " $sample1
 rm $DataPath/$sample1\_S1_L001_R1_001.fastq.gz $DataPath/$sample1\_S1_L002_R1_001.fastq.gz $DataPath/$sample1\_S1_L003_R1_001.fastq.gz $DataPath/$sample1\_S1_L004_R1_001.fastq.gz
@@ -92,6 +103,7 @@ rm $DataPath/$sample2\_S2_L001_R2_001.fastq.gz $DataPath/$sample2\_S2_L002_R2_00
 echo "Deleting uncatenated files for: " $sample3
 rm $DataPath/$sample3\_S3_L001_R1_001.fastq.gz $DataPath/$sample3\_S3_L002_R1_001.fastq.gz $DataPath/$sample3\_S3_L003_R1_001.fastq.gz $DataPath/$sample3\_S3_L004_R1_001.fastq.gz
 rm $DataPath/$sample3\_S3_L001_R2_001.fastq.gz $DataPath/$sample3\_S3_L002_R2_001.fastq.gz $DataPath/$sample3\_S3_L003_R2_001.fastq.gz $DataPath/$sample3\_S3_L004_R2_001.fastq.gz
+to_add
 }
 
 BWA_Step(){
@@ -130,7 +142,7 @@ java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample2.bwa.so
 echo "AddOrReplaceReadGroups sample: " $sample3
 java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample3.bwa.sorted.bam OUTPUT=$DataPath/$sample3.rg.sorted.bam RGID=$sample3 RGSM=$sample3 RGLB=$sample3 RGPL=illumina RGPU=miseq
 echo "AddOrReplaceReadGroups sample: " $sample4
-java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample4bwa.sorted.bam OUTPUT=$DataPath/$sample4.rg.sorted.bam RGID=$sample4 RGSM=$sample4 RGLB=$sample4 RGPL=illumina RGPU=miseq
+java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample4.bwa.sorted.bam OUTPUT=$DataPath/$sample4.rg.sorted.bam RGID=$sample4 RGSM=$sample4 RGLB=$sample4 RGPL=illumina RGPU=miseq
 echo "AddOrReplaceReadGroups sample: " $sample5
 java -Xmx24g -jar $PICARD AddOrReplaceReadGroups INPUT=$DataPath/$sample5.bwa.sorted.bam OUTPUT=$DataPath/$sample5.rg.sorted.bam RGID=$sample5 RGSM=$sample5 RGLB=$sample5 RGPL=illumina RGPU=miseq
 echo "AddOrReplaceReadGroups sample: " $sample6
@@ -255,12 +267,23 @@ echo "Haplotype calling sample: " $sample2
 java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample2.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample2.haplotypecaller.g.vcf -nct 7
 echo "Haplotype calling sample: " $sample3
 java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample3.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample3.haplotypecaller.g.vcf -nct 7
+
+echo "Haplotype calling sample: " $sample4
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample4.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample4.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample5
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample5.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample5.haplotypecaller.g.vcf -nct 7
+echo "Haplotype calling sample: " $sample6
+java -Xmx40g -jar $GATK -T HaplotypeCaller -R $FASTA --dbsnp $dbSNP -I $DataPath/$sample6.recalibrated.sorted.bam -L $CCDS --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 -o $DataPath/$sample6.haplotypecaller.g.vcf -nct 7
+
 echo "Generating gVCF"
-java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $DataPath/$sample1.haplotypecaller.g.vcf --variant $DataPath/$sample2.haplotypecaller.g.vcf --variant $DataPath/$sample3.haplotypecaller.g.vcf -o $DataPath/$RunCode.haplotypecaller.vcf
+java -Xmx40g -jar $GATK -T GenotypeGVCFs -R $FASTA --variant $DataPath/$sample1.haplotypecaller.g.vcf --variant $DataPath/$sample2.haplotypecaller.g.vcf --variant $DataPath/$sample3.haplotypecaller.g.vcf --variant $DataPath/$sample4.haplotypecaller.g.vcf --variant $DataPath/$sample5.haplotypecaller.g.vcf --variant $DataPath/$sample6.haplotypecaller.g.vcf -o $DataPath/$RunCode.haplotypecaller.vcf
+
 echo "zless, sed etc"
 zless $DataPath/$RunCode.haplotypecaller.vcf | sed "s/ID=AD,Number=./ID=AD,Number=R/" | vt decompose -s - | vt normalize -r $FASTA - > $DataPath/$RunCode.hc.normalized.vcf
+
 echo "Variant annotator"
-java -Xmx24g -jar $GATK -T VariantAnnotator -R $FASTA -nt 7 --group StandardAnnotation --dbsnp $dbSNP -I $DataPath/$sample1.recalibrated.sorted.bam -I $DataPath/$sample2.recalibrated.sorted.bam -I $DataPath/$sample3.recalibrated.sorted.bam --variant $DataPath/$RunCode.hc.normalized.vcf -L $DataPath/$RunCode.hc.normalized.vcf -o $DataPath/$RunCode.annotated.vcf
+java -Xmx24g -jar $GATK -T VariantAnnotator -R $FASTA -nt 7 --group StandardAnnotation --dbsnp $dbSNP -I $DataPath/$sample1.recalibrated.sorted.bam -I $DataPath/$sample2.recalibrated.sorted.bam -I $DataPath/$sample3.recalibrated.sorted.bam -I $DataPath/$sample4.recalibrated.sorted.bam -I $DataPath/$sample5.recalibrated.sorted.bam -I $DataPath/$sample6.recalibrated.sorted.bam --variant $DataPath/$RunCode.hc.normalized.vcf -L $DataPath/$RunCode.hc.normalized.vcf -o $DataPath/$RunCode.annotated.vcf
+
 echo "Filering variants"
 java -Xmx24g -jar $GATK -T VariantFiltration -R $FASTA --filterExpression "MQ0 > 50.0" --filterName "HighMQ0" --filterExpression "DP < 10.0" --filterName "LowDepth" --filterExpression "QUAL < 10.0" --filterName "LowQual" --filterExpression "MQ < 10.0" --filterName "LowMappingQual" --variant $DataPath/$RunCode.annotated.vcf -o $DataPath/$RunCode.filtered.vcf
 echo "...complete."
@@ -499,17 +522,14 @@ echo "...complete."
 ##########################
 timestamp
 #Catenation
-BWA_Step
-Read_Groups
-Build_BAM_Index
-Mark_Duplicates
-Realigner_1
-Realigner_2
-Recalibration
-
-#Code only altered up to here for 6 samples
-
-#Variant_Calling
+#BWA_Step
+#Read_Groups
+#Build_BAM_Index
+#Mark_Duplicates
+#Realigner_1
+#Realigner_2
+#Recalibration
+Variant_Calling
 #SNPEff
 #Gemini_Update
 #Gemini_db
