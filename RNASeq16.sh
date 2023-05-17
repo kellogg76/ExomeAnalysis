@@ -11,28 +11,28 @@ to_add
 
 
 #Run Number
-RunCode=RNASeq-005
+RunCode=48c
 
 #Data Path
 DataPath=/mnt/d/$RunCode
 
 #Enter sample names below
-sample1=B16F10-NT1
-sample2=B16F10-NT2
-sample3=B16F10-NT3
-sample4=B16F10-PFIZ1
-sample5=B16F10-PFIZ2
-sample6=B16F10-PFIZ3
-sample7=B16F10-MOD1
-sample8=B16F10-MOD2
-sample9=B16F10-MOD3
-sample10=
-sample11=
-sample12=
-sample13=
-sample14=
-sample15=
-sample16=
+sample1=1A-JM-048
+sample2=3-JM-048
+sample3=4-JM-048
+sample4=5-JM-048
+sample5=6-JM-048
+sample6=7-JM-048
+sample7=8-JM-048
+sample8=9-JM-048
+sample9=10-JM-048
+sample10=12-JM-048
+sample11=13-JM-048
+sample12=14-JM-048
+sample13=16-JM-048
+sample14=17-JM-048
+sample15=18-JM-048
+sample16=19-JM-048
 
 Header_text(){
 WHITE='\033[1;37m'
@@ -56,11 +56,17 @@ printf "${WHITE}
 }
 
 move_fastq() {
+echo "***************"
+echo "Moving fastq files to top level directory..."
+echo "***************"
 #Move files to main directory
 find /mnt/d/$RunCode -type f -print0 | xargs -0 mv -t /mnt/d/$RunCode
 }
 
 catenate_fastq(){
+echo "***************"
+echo "Catenating fastq files..."
+echo "***************"
 mkdir $DataPath/catenated
 #Catenate the files
 cat $DataPath/$sample1\_S1_L001_R1_001.fastq.gz $DataPath/$sample1\_S1_L002_R1_001.fastq.gz $DataPath/$sample1\_S1_L003_R1_001.fastq.gz $DataPath/$sample1\_S1_L004_R1_001.fastq.gz > $DataPath/catenated/$sample1-R1.fastq.gz && cat $DataPath/$sample1\_S1_L001_R2_001.fastq.gz $DataPath/$sample1\_S1_L002_R2_001.fastq.gz $DataPath/$sample1\_S1_L003_R2_001.fastq.gz $DataPath/$sample1\_S1_L004_R2_001.fastq.gz > $DataPath/catenated/$sample1-R2.fastq.gz
@@ -93,42 +99,46 @@ cat $DataPath/Undetermined_S0_L001_R1_001.fastq.gz $DataPath/Undetermined_S0_L00
 
 RNASeq_QC(){
 echo "***************"
-echo "RNASeq_QC"
+echo "Performing RNASeq QC"
 echo "***************"
 #Copy fastq to new dir to run faster
 #echo "Copying data to a new folder..."
 #mkdir $DataPath/catenated/QC
-cd $DataPath/catenated/
-cp -p ../*.fastq.gz .
-echo "Copying complete."
+#mkdir $DataPath/catenated/
+cd $DataPath/
+#cp -p ../*.fastq.gz .
+#echo "Copying complete."
 
 #FastQC - needs to use latest version of java, so change if needed, and then change back to java 8
 #sudo update-alternatives --config java  #To change manually
 #Auto change java version
-#echo "Current java version"
-#java -version
+echo "Active java version:"
+java -version
 export PATH=/usr/lib/jvm/java-11-openjdk-amd64/bin/:$PATH
-#echo "Changed java to"
-#java -version
+echo "Changed java to"
+java -version
 
 #Run FastQC
 echo "Running FastQC..."
-fastqc $DataPath/catenated/*.fastq.gz
+fastqc $DataPath/*.fastq.gz
 echo "FastQC complete."
 
 #Auto change java version back
+echo "Changing java back..."
 export PATH=/usr/lib/jvm/jdk1.8.0_291/bin/:$PATH
-#echo "Current java version"
-#java -version
-
-#MultiQC
-echo "Running multiqc..."
-multiqc $DataPath/catenated/ .
-echo "multiqc complete."
+echo "Active java version:"
+java -version
 
 #Move QC Files to new dir
 mkdir fastqc
 mv *_fastqc* fastqc
+
+#MultiQC
+echo "Running multiqc..."
+multiqc $DataPath/ .
+echo "multiqc complete."
+
+
 }
 
 map_reads() {
